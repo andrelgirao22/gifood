@@ -99,6 +99,26 @@ public class RestauranteController {
         restauranteService.inativar(id);
     }
 
+    @PutMapping("/ativacoes")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void ativarMultiples(@RequestBody List<Long> ids) {
+        try {
+            restauranteService.ativar(ids);
+        }catch (RestauranteNaoEncontradoException e) {
+            throw new NegocioException(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/inativacoes")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void inativarMultiples(@RequestBody List<Long> ids) {
+        try {
+            restauranteService.inativar(ids);
+        }catch (RestauranteNaoEncontradoException e) {
+            throw new NegocioException(e.getMessage());
+        }
+    }
+
     @PutMapping("/{id}/aberto")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void abrir(@PathVariable Long id) {

@@ -20,6 +20,7 @@ public class Pedido {
     @SequenceGenerator(name = "pedido_seq", sequenceName = "pedido_seq", allocationSize = 1)
     private Long id;
     private BigDecimal subtotal;
+    private BigDecimal taxaFrete;
     private BigDecimal valorTotal;
 
     @CreationTimestamp
@@ -46,8 +47,24 @@ public class Pedido {
     private List<ItemPedido> itens = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    private StatusPedido status;
+    private StatusPedido status = StatusPedido.CRIADO;
 
     @Embedded
     private Endereco endereco;
+
+    public void calculaValorTotal() {
+        this.subtotal = getItens().stream()
+                .map(ItemPedido::getPrecoTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        this.valorTotal = this.subtotal.add(this.taxaFrete);
+    }
+
+    public void definirFrete() {
+        setTaxaFrete(getRestaurante().getTaxaFrete());
+    }
+
+    public void atribuirPedidoAosItens() {
+        getItens().forEach(itemPedido -> itemPedido.setPedido(this));
+    }
 }

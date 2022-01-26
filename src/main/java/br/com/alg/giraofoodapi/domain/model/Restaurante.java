@@ -111,4 +111,12 @@ public class Restaurante {
     public boolean removerProdutos(Produto produto) {
         return getProdutos().remove(produto);
     }
+
+    public boolean aceitaFormaPagamento(FormaPagamento formaPagamento) {
+        return getFormasPagamento().contains(formaPagamento);
+    }
+
+    public boolean naoAceitaFormaPagamento(FormaPagamento formaPagamento) {
+        return !aceitaFormaPagamento(formaPagamento);
+    }
 }
