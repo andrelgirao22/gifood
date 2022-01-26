@@ -1,0 +1,46 @@
+package br.com.alg.giraofoodapi.api.controller;
+
+import br.com.alg.giraofoodapi.api.assembler.UsuarioModelAssembler;
+import br.com.alg.giraofoodapi.api.model.dto.UsuarioDTO;
+import br.com.alg.giraofoodapi.domain.model.Restaurante;
+import br.com.alg.giraofoodapi.domain.repository.RestauranteRepository;
+import br.com.alg.giraofoodapi.domain.service.CadastroUsuarioService;
+import br.com.alg.giraofoodapi.domain.service.CadastrosRestauranteService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/restaurante/{id}/responsaveis")
+public class RestauranteUsuarioResponsavelController {
+
+    @Autowired
+    private UsuarioModelAssembler assembler;
+
+    @Autowired
+    private CadastrosRestauranteService restauranteService;
+
+    @Autowired
+    private CadastroUsuarioService usuarioService;
+
+    @GetMapping
+    public List<UsuarioDTO> listar(@PathVariable Long id) {
+        Restaurante restaurante = restauranteService.buscar(id);
+        return assembler.toCollectionDTO(restaurante.getUsuarios());
+    }
+
+    @DeleteMapping("/{usuarioId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void desassociarResponsavel(@PathVariable Long id, @PathVariable Long usuarioId) {
+        usuarioService.desassociarResponsavel(id, usuarioId);
+    }
+
+    @PutMapping("/{usuarioId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void associarResponsavel(@PathVariable Long id, @PathVariable Long usuarioId) {
+        usuarioService.associarResponsavel(id, usuarioId);
+    }
+
+}

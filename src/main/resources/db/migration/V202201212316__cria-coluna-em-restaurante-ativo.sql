@@ -1,0 +1,1 @@
+ALTER TABLE restaurante ADD COLUMN ativo boolean NOT NULL DEFAULT true;

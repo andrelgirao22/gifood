@@ -1,0 +1,1 @@
+CREATE SEQUENCE IF NOT EXISTS forma_pagamento_seq START 1;

@@ -1,0 +1,1 @@
+alter table if exists restaurante_forma_pagamento add constraint pk_restaurante_forma_pagamento primary key (forma_pagamento_id, restaurante_id);
