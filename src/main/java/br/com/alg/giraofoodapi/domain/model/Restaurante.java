@@ -96,6 +96,7 @@ public class Restaurante {
         return getFormasPagamento().remove(formaPagamento);
     }
 
+
     public boolean adicionarResponsavel(Usuario usuario) {
         return getUsuarios().add(usuario);
     }

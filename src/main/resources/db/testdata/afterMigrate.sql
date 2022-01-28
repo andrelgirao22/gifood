@@ -90,8 +90,9 @@ delete from item_pedido;
 
 insert into pedido (id, restaurante_id, cliente_id, forma_pagamento_id, endereco_cidade_id, endereco_cep,
     endereco_logradouro, endereco_numero, endereco_complemento, endereco_bairro,
-    status, data_criacao, subtotal, taxa_frete, valor_total)
-values (1, 1, 1, 1, 1, '38400-000', 'Rua Floriano Peixoto', '500', 'Apto 801', 'Brasil', 'CRIADO', timezone('utc', now()), 298.90, 10, 308.90);
+    status, data_criacao, subtotal, taxa_frete, valor_total, codigo)
+values (1, 1, 1, 1, 1, '38400-000', 'Rua Floriano Peixoto', '500', 'Apto 801', 'Brasil', 'CRIADO', timezone('utc', now()), 298.90, 10, 308.90,
+'23fe23aa-f860-470d-848e-b80fc642ac3c');
 
 insert into item_pedido (id, pedido_id, produto_id, quantidade, preco_unitario, preco_total, observacao)
 values (1, 1, 1, 1, 78.9, 78.9, null);
@@ -102,7 +103,11 @@ values (2, 1, 2, 2, 110, 220, 'Menos picante, por favor');
 
 insert into pedido (id, restaurante_id, cliente_id, forma_pagamento_id, endereco_cidade_id, endereco_cep,
         endereco_logradouro, endereco_numero, endereco_complemento, endereco_bairro,
-        status, data_criacao, subtotal, taxa_frete, valor_total)
-values (2, 4, 1, 2, 1, '38400-111', 'Rua Acre', '300', 'Casa 2', 'Centro', 'CRIADO', timezone('utc', now()), 79, 0, 79);
+        status, data_criacao, subtotal, taxa_frete, valor_total, codigo)
+values (2, 4, 1, 2, 1, '38400-111', 'Rua Acre', '300', 'Casa 2', 'Centro', 'CRIADO', timezone('utc', now()), 79, 0, 79,
+'f5e75726-839d-47a8-bc3b-68353e08d5f7');
 
 insert into item_pedido (id, pedido_id, produto_id, quantidade, preco_unitario, preco_total, observacao) values (3, 2, 6, 1, 79, 79, 'Ao ponto');
+
+SELECT setval('pedido_seq', 2);
+SELECT setval('item_pedido_seq', 3);

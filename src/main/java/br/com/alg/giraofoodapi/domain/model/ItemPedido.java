@@ -28,4 +28,19 @@ public class ItemPedido {
     @ManyToOne
     @JoinColumn(name = "produto_id", nullable = false)
     private Produto produto;
+
+    public void calculaValorTotal() {
+        var precoUnitario = getPrecoUnitario();
+        var quantidade = BigDecimal.valueOf(getQuantidade());
+
+        if(precoUnitario == null) {
+            precoUnitario = BigDecimal.ZERO;
+        }
+
+        if(quantidade == null) {
+            quantidade = BigDecimal.ZERO;
+        }
+
+        precoTotal = precoUnitario.multiply(quantidade);
+    }
 }

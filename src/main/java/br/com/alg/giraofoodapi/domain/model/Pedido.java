@@ -1,5 +1,6 @@
 package br.com.alg.giraofoodapi.domain.model;
 
+import br.com.alg.giraofoodapi.domain.exception.NegocioException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -19,6 +21,9 @@ public class Pedido {
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pedido_seq")
     @SequenceGenerator(name = "pedido_seq", sequenceName = "pedido_seq", allocationSize = 1)
     private Long id;
+
+    private String codigo;
+
     private BigDecimal subtotal;
     private BigDecimal taxaFrete;
     private BigDecimal valorTotal;
@@ -31,7 +36,7 @@ public class Pedido {
     private OffsetDateTime dataCancelamento;
     private OffsetDateTime dataEntrega;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "forma_pagamento_id", nullable = false)
     private FormaPagamento formaPagamento;
 
@@ -43,7 +48,7 @@ public class Pedido {
     @JoinColumn(name = "cliente_id", nullable = false)
     private Usuario cliente;
 
-    @OneToMany(mappedBy = "pedido")
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<ItemPedido> itens = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
@@ -53,6 +58,8 @@ public class Pedido {
     private Endereco endereco;
 
     public void calculaValorTotal() {
+        getItens().forEach(ItemPedido::calculaValorTotal);
+
         this.subtotal = getItens().stream()
                 .map(ItemPedido::getPrecoTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -66,5 +73,35 @@ public class Pedido {
 
     public void atribuirPedidoAosItens() {
         getItens().forEach(itemPedido -> itemPedido.setPedido(this));
+    }
+
+    public void confirma() {
+        setStatus(StatusPedido.CONFIRMADO);
+        setDataConfirmacao(OffsetDateTime.now());
+    }
+
+    public void entregue() {
+        setStatus(StatusPedido.ENTREGUE);
+        setDataEntrega(OffsetDateTime.now());
+    }
+
+    public void cancelar() {
+        setStatus(StatusPedido.CANCELADO);
+        setDataCancelamento(OffsetDateTime.now());
+    }
+
+    @PrePersist
+    private void geraCodigo() {
+        setCodigo(UUID.randomUUID().toString());
+    }
+
+    private void setStatus(StatusPedido novoStatus) {
+        if(getStatus().naoPodeAlterarPara(novoStatus)) {
+            throw new NegocioException(
+                    String.format("Status do pedido %s não pode ser alterado de %s para %s",
+                            getCodigo(), getStatus().getDescricao(), novoStatus.getDescricao()));
+        }
+
+        this.status = novoStatus;
     }
 }
