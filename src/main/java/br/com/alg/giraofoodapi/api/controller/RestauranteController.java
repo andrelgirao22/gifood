@@ -2,6 +2,7 @@ package br.com.alg.giraofoodapi.api.controller;
 
 import br.com.alg.giraofoodapi.api.assembler.RestauranteInputDisassembler;
 import br.com.alg.giraofoodapi.api.assembler.RestauranteModelAssembler;
+import br.com.alg.giraofoodapi.api.model.view.RestauranteView;
 import br.com.alg.giraofoodapi.core.validation.ValidacaoException;
 import br.com.alg.giraofoodapi.domain.exception.*;
 import br.com.alg.giraofoodapi.api.model.dto.RestauranteDTO;
@@ -9,12 +10,14 @@ import br.com.alg.giraofoodapi.domain.model.Restaurante;
 import br.com.alg.giraofoodapi.api.model.input.RestauranteInput;
 import br.com.alg.giraofoodapi.domain.repository.RestauranteRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastrosRestauranteService;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -46,9 +49,33 @@ public class RestauranteController {
     @Autowired
     private RestauranteInputDisassembler restauranteInputDisassembler;
 
-    @GetMapping
-    public List<RestauranteDTO> listar() {
+
+    /*
+    @JsonView(RestauranteView.Resumo.class)
+    @GetMapping(params = "projecao=resumo")
+    public List<RestauranteDTO> listarResumo() {
         return modelAssembler.toCollectionDTO(repository.findAll());
+    }
+
+    @JsonView(RestauranteView.ApenasNome.class)
+    @GetMapping(params = "projecao=apenas-nome")
+    public List<RestauranteDTO> listarApenasNome() {
+        return modelAssembler.toCollectionDTO(repository.findAll());
+    }
+     */
+
+    @GetMapping
+    public MappingJacksonValue listar(@RequestParam(defaultValue = "completo") String projecao) {
+        List<Restaurante> restaurantes = repository.findAll();
+        List<RestauranteDTO> restaurantesDTO = modelAssembler.toCollectionDTO(restaurantes);
+        MappingJacksonValue restaurantesWrapper = new MappingJacksonValue(restaurantesDTO);
+
+        if(projecao.equals("apenas-nome")) {
+            restaurantesWrapper.setSerializationView(RestauranteView.ApenasNome.class);
+        } else if(projecao.equals("resumo")) {
+            restaurantesWrapper.setSerializationView(RestauranteView.Resumo.class);
+        }
+        return restaurantesWrapper;
     }
 
     @GetMapping("/{id}")

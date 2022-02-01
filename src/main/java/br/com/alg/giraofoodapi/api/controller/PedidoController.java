@@ -11,9 +11,15 @@ import br.com.alg.giraofoodapi.domain.exception.NegocioException;
 import br.com.alg.giraofoodapi.domain.model.Pedido;
 import br.com.alg.giraofoodapi.domain.model.Usuario;
 import br.com.alg.giraofoodapi.domain.repository.PedidoRepository;
+import br.com.alg.giraofoodapi.domain.repository.filter.PedidoFilter;
 import br.com.alg.giraofoodapi.domain.service.EmissaoPedidoService;
+import br.com.alg.giraofoodapi.infrastructure.repository.spec.PedidoSpec;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -39,9 +45,27 @@ public class PedidoController {
     private PedidoInputDisassembler disassembler;
 
     @GetMapping
-    public List<PedidoResumoDTO> listar() {
-        return assembler.toCollection(repository.findAll());
+    public List<PedidoResumoDTO> pesquisar(PedidoFilter filtro) {
+        List<Pedido> pedidos = repository.findAll(PedidoSpec.usandoFiltro(filtro));
+
+        return assembler.toCollection(pedidos);
     }
+
+//    @GetMapping
+//    public MappingJacksonValue listar(@RequestParam(required = false) String campos) {
+//        List<PedidoResumoDTO> pedidos = assembler.toCollection(repository.findAll());
+//        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(pedidos);
+//
+//        SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+//        filterProvider.addFilter("pedidoFilter", SimpleBeanPropertyFilter.serializeAll());
+//
+//        if(!StringUtils.isBlank(campos)) {
+//            filterProvider.addFilter("pedidoFilter", SimpleBeanPropertyFilter.filterOutAllExcept(campos.split(",")));
+//        }
+//
+//        mappingJacksonValue.setFilters(filterProvider);
+//        return mappingJacksonValue;
+//    }
 
     @GetMapping("/{id}")
     public PedidoDTO buscar(@PathVariable String id) {

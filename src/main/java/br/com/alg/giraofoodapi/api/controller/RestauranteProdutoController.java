@@ -7,6 +7,7 @@ import br.com.alg.giraofoodapi.api.model.dto.ProdutoDTO;
 import br.com.alg.giraofoodapi.api.model.input.ProdutoInput;
 import br.com.alg.giraofoodapi.domain.model.Produto;
 import br.com.alg.giraofoodapi.domain.model.Restaurante;
+import br.com.alg.giraofoodapi.domain.repository.ProdutoRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastroProdutoService;
 import br.com.alg.giraofoodapi.domain.service.CadastrosRestauranteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +34,21 @@ public class RestauranteProdutoController {
     private CadastroProdutoService produtoService;
 
     @Autowired
+    private ProdutoRepository produtoRepository;
+
+    @Autowired
     private RestauranteInputDisassembler restauranteInputDisassembler;
 
     @GetMapping
-    public List<ProdutoDTO> listar(@PathVariable Long id) {
+    public List<ProdutoDTO> listar(@PathVariable Long id, @RequestParam(required = false) boolean incluirInativos) {
         Restaurante restaurante = restauranteService.buscar(id);
-        return produtoModelAssembler.toCollectionDTO(restaurante.getProdutos());
+        List<Produto> todosProdutos = null;
+        if(incluirInativos) {
+            todosProdutos = restaurante.getProdutos();
+        } else {
+            todosProdutos = produtoRepository.findAtivosByRestaurantes(restaurante);
+        }
+        return produtoModelAssembler.toCollectionDTO(todosProdutos);
     }
 
     @PostMapping("/{produtoID}")

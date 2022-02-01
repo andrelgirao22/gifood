@@ -8,6 +8,10 @@ import br.com.alg.giraofoodapi.api.model.input.CozinhaInput;
 import br.com.alg.giraofoodapi.domain.repository.CozinhaRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastroCozinhaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,8 +36,11 @@ public class CozinhaController {
     private CozinhaInputDisassembler disassembler;
 
     @GetMapping
-    public ResponseEntity<List<CozinhaDTO>> listar() {
-        return ResponseEntity.status(HttpStatus.OK).body(assembler.toCollectionDTO(repository.findAll()));
+    public Page<CozinhaDTO> listar(@PageableDefault(size = 10) Pageable pageable) {
+        Page<Cozinha> cozinhasPage = repository.findAll(pageable);
+        List<CozinhaDTO> cozinhasDTO = assembler.toCollectionDTO(cozinhasPage.getContent());
+        Page<CozinhaDTO> cozinhaDTOPage = new PageImpl<>(cozinhasDTO, pageable, cozinhasPage.getTotalElements());
+        return cozinhaDTOPage;
     }
 
     @GetMapping("/{id}")
