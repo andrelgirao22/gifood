@@ -6,6 +6,7 @@ import br.com.alg.giraofoodapi.api.assembler.PedidoResumoModelAssembler;
 import br.com.alg.giraofoodapi.api.model.dto.PedidoDTO;
 import br.com.alg.giraofoodapi.api.model.dto.PedidoResumoDTO;
 import br.com.alg.giraofoodapi.api.model.input.PedidoInput;
+import br.com.alg.giraofoodapi.core.data.PageableTranslator;
 import br.com.alg.giraofoodapi.domain.exception.EntidadeNaoEncontradaException;
 import br.com.alg.giraofoodapi.domain.exception.NegocioException;
 import br.com.alg.giraofoodapi.domain.model.Pedido;
@@ -16,8 +17,13 @@ import br.com.alg.giraofoodapi.domain.service.EmissaoPedidoService;
 import br.com.alg.giraofoodapi.infrastructure.repository.spec.PedidoSpec;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
@@ -45,10 +51,14 @@ public class PedidoController {
     private PedidoInputDisassembler disassembler;
 
     @GetMapping
-    public List<PedidoResumoDTO> pesquisar(PedidoFilter filtro) {
-        List<Pedido> pedidos = repository.findAll(PedidoSpec.usandoFiltro(filtro));
+    public Page<PedidoResumoDTO> pesquisar(PedidoFilter filtro, @PageableDefault(size = 10) Pageable pageable) {
 
-        return assembler.toCollection(pedidos);
+        pageable = traduzirPageable(pageable);
+
+        Page<Pedido> pedidoPage = repository.findAll(PedidoSpec.usandoFiltro(filtro), pageable);
+        List<PedidoResumoDTO> pedidosDto = assembler.toCollection(pedidoPage.getContent());
+        Page<PedidoResumoDTO> page = new PageImpl(pedidosDto, pageable, pedidoPage.getTotalElements());
+        return page;
     }
 
 //    @GetMapping
@@ -88,6 +98,17 @@ public class PedidoController {
         } catch (EntidadeNaoEncontradaException e) {
             throw new NegocioException(e.getMessage(), e);
         }
+    }
+
+    private Pageable traduzirPageable(Pageable pageable) {
+        var mapeamento = ImmutableMap.of(
+                "codigo", "codigo",
+                "restaurante.nome", "restaurante.nome",
+                "nomeCliente", "cliente.nome",
+                "valorTotal", "valorTotal"
+        );
+
+        return PageableTranslator.tranlate(pageable, mapeamento);
     }
 
 }
