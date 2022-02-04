@@ -1,4 +1,4 @@
-package br.com.alg.giraofoodapi.infrastructure.service;
+package br.com.alg.giraofoodapi.infrastructure.service.query;
 
 import br.com.alg.giraofoodapi.domain.filter.VendaDiariaFilter;
 import br.com.alg.giraofoodapi.domain.model.Pedido;
@@ -9,12 +9,10 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.criteria.Predicate;
 
 @Repository
 public class VendaQueryServiceImpl implements VendaQueryService {
@@ -28,7 +26,7 @@ public class VendaQueryServiceImpl implements VendaQueryService {
         var query = builder.createQuery(VendaDiaria.class);
         var root = query.from(Pedido.class);
         var predicates = new ArrayList<Predicate>();
-
+        
         var functionDateDataCriacao = builder.function(
                 "date_trunc", Date.class,
                 builder.literal("day"), root.get("dataCriacao"));
