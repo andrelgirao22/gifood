@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.UUID;
 
@@ -30,7 +31,7 @@ public class RestauranteProdutoFotoController {
 
     @PutMapping
     public FotoProdutoDTO atualizarFoto(@PathVariable Long restauranteId,
-                                        @PathVariable Long produtoId, @Valid FotoProdutoInput fotoProdutoInput) {
+                                        @PathVariable Long produtoId, @Valid FotoProdutoInput fotoProdutoInput) throws IOException {
 
         Produto produto = cadastroProdutoService.buscarPeloRestaurante(restauranteId, produtoId);
 
@@ -43,7 +44,7 @@ public class RestauranteProdutoFotoController {
         fotoProduto.setTamanho(arquivo.getSize());
         fotoProduto.setDescricao(fotoProdutoInput.getDescricao());
 
-        fotoProduto = produtoService.salvar(fotoProduto);
+        fotoProduto = produtoService.salvar(fotoProduto, arquivo.getInputStream());
 
         return assembler.toDTO(fotoProduto);
     }
