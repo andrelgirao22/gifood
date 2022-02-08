@@ -1,5 +1,6 @@
 package br.com.alg.giraofoodapi.domain.service;
 
+import br.com.alg.giraofoodapi.domain.exception.FotoProdutoNaoEncontradaException;
 import br.com.alg.giraofoodapi.domain.model.FotoProduto;
 import br.com.alg.giraofoodapi.domain.repository.ProdutoRepository;
 import br.com.alg.giraofoodapi.infrastructure.service.storage.LocalFotoStorageService;
@@ -25,11 +26,13 @@ public class CatalogoFotoProdutoService {
         Long restauranteId = fotoProduto.getRestauranteId();
         Long produtoId = fotoProduto.getProduto().getId();
         String nomeNovoArquivo = fotoStorageService.gerarNomeArquivo(fotoProduto.getNomeArquivo());
+        String nomeArquivoExistente = null;
 
         Optional<FotoProduto> fotoProdutoExistente =
                 produtoRepository.findFotoById(restauranteId, produtoId);
 
         if(fotoProdutoExistente.isPresent()) {
+            nomeArquivoExistente = fotoProdutoExistente.get().getNomeArquivo();
             produtoRepository.delete(fotoProdutoExistente.get());
         }
 
@@ -42,9 +45,13 @@ public class CatalogoFotoProdutoService {
                 .inputStream(inputStream)
                 .build();
 
-        fotoStorageService.armazenar(novaFoto);
+        fotoStorageService.substituir(nomeArquivoExistente, novaFoto);
 
         return foto;
     }
 
+    public FotoProduto buscar(Long restauranteId, Long produtoId) {
+        return produtoRepository.findFotoById(restauranteId, produtoId)
+                        .orElseThrow(() -> new FotoProdutoNaoEncontradaException(restauranteId, produtoId));
+    }
 }
