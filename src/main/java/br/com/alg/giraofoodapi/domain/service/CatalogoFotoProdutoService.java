@@ -3,7 +3,6 @@ package br.com.alg.giraofoodapi.domain.service;
 import br.com.alg.giraofoodapi.domain.exception.FotoProdutoNaoEncontradaException;
 import br.com.alg.giraofoodapi.domain.model.FotoProduto;
 import br.com.alg.giraofoodapi.domain.repository.ProdutoRepository;
-import br.com.alg.giraofoodapi.infrastructure.service.storage.LocalFotoStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,5 +52,14 @@ public class CatalogoFotoProdutoService {
     public FotoProduto buscar(Long restauranteId, Long produtoId) {
         return produtoRepository.findFotoById(restauranteId, produtoId)
                         .orElseThrow(() -> new FotoProdutoNaoEncontradaException(restauranteId, produtoId));
+    }
+
+    @Transactional
+    public void excluir(Long restauranteId, Long produtoId) {
+        FotoProduto fotoProduto = buscar(restauranteId, produtoId);
+        produtoRepository.delete(fotoProduto);
+        produtoRepository.flush();
+
+        fotoStorageService.remover(fotoProduto.getNomeArquivo());
     }
 }
