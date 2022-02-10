@@ -14,8 +14,14 @@ import java.nio.file.Path;
 public class StorageProperties {
 
     private Local local = new Local();
-
     private Dropbox dropbox = new Dropbox();
+    private TipoStorage tipo = TipoStorage.LOCAL;
+
+    public enum TipoStorage {
+        LOCAL,
+        DROPBOX,
+        S3
+    }
 
     @Getter
     @Setter

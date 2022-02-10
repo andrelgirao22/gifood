@@ -12,14 +12,13 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 
-@Service
 public class DbxFotoStorageService implements FotoStorageService {
 
     @Autowired
     private DbxClientV2 dbxClient;
 
     @Override
-    public InputStream recuperar(String nomeArquivo) {
+    public FotoRecuperada recuperar(String nomeArquivo) {
         try {
             ListFolderResult result = dbxClient.files().listFolderBuilder("")
                     .withIncludeDeleted(false)
@@ -30,9 +29,12 @@ public class DbxFotoStorageService implements FotoStorageService {
             for(Metadata metadata: result.getEntries()) {
                 if(metadata.getPathLower().contains(nomeArquivo)) {
                     FileMetadata fileMetadata = (FileMetadata) metadata;
-                    return dbxClient.files()
+                    InputStream is = dbxClient.files()
                             .download(metadata.getPathLower(), fileMetadata.getRev())
                             .getInputStream();
+                    return FotoRecuperada.builder()
+                            .inputStream(is)
+                            .build();
                 }
             }
 
