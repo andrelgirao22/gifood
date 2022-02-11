@@ -15,7 +15,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -65,7 +67,7 @@ public class RestauranteController {
      */
 
     @GetMapping
-    public MappingJacksonValue listar(@RequestParam(defaultValue = "completo") String projecao) {
+    public ResponseEntity<MappingJacksonValue> listar(@RequestParam(defaultValue = "completo") String projecao) {
         List<Restaurante> restaurantes = repository.findAll();
         List<RestauranteDTO> restaurantesDTO = modelAssembler.toCollectionDTO(restaurantes);
         MappingJacksonValue restaurantesWrapper = new MappingJacksonValue(restaurantesDTO);
@@ -75,7 +77,9 @@ public class RestauranteController {
         } else if(projecao.equals("resumo")) {
             restaurantesWrapper.setSerializationView(RestauranteView.Resumo.class);
         }
-        return restaurantesWrapper;
+        return ResponseEntity.ok()
+                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://localhost:8000")
+                .body(restaurantesWrapper);
     }
 
     @GetMapping("/{id}")
