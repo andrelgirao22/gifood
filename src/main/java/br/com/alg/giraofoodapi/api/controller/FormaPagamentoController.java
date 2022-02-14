@@ -14,7 +14,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/formaPagamentos")
+@RequestMapping("/formas-pagamento")
 public class FormaPagamentoController {
 
     @Autowired

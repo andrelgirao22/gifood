@@ -2,12 +2,15 @@ package br.com.alg.giraofoodapi.api.controller;
 
 import br.com.alg.giraofoodapi.api.assembler.RestauranteInputDisassembler;
 import br.com.alg.giraofoodapi.api.assembler.RestauranteModelAssembler;
+import br.com.alg.giraofoodapi.api.model.dto.RestauranteDTO;
+import br.com.alg.giraofoodapi.api.model.input.RestauranteInput;
 import br.com.alg.giraofoodapi.api.model.view.RestauranteView;
 import br.com.alg.giraofoodapi.core.validation.ValidacaoException;
-import br.com.alg.giraofoodapi.domain.exception.*;
-import br.com.alg.giraofoodapi.api.model.dto.RestauranteDTO;
+import br.com.alg.giraofoodapi.domain.exception.CidadeNaoEncontradaException;
+import br.com.alg.giraofoodapi.domain.exception.CozinhaNaoEncontradaException;
+import br.com.alg.giraofoodapi.domain.exception.NegocioException;
+import br.com.alg.giraofoodapi.domain.exception.RestauranteNaoEncontradoException;
 import br.com.alg.giraofoodapi.domain.model.Restaurante;
-import br.com.alg.giraofoodapi.api.model.input.RestauranteInput;
 import br.com.alg.giraofoodapi.domain.repository.RestauranteRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastrosRestauranteService;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -15,11 +18,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -32,6 +32,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
+//@CrossOrigin(maxAge = 20)
 @RestController
 @RequestMapping("/restaurantes")
 public class RestauranteController {
@@ -52,19 +53,19 @@ public class RestauranteController {
     private RestauranteInputDisassembler restauranteInputDisassembler;
 
 
-    /*
     @JsonView(RestauranteView.Resumo.class)
-    @GetMapping(params = "projecao=resumo")
+    @GetMapping
     public List<RestauranteDTO> listarResumo() {
         return modelAssembler.toCollectionDTO(repository.findAll());
     }
+
+    /*
 
     @JsonView(RestauranteView.ApenasNome.class)
     @GetMapping(params = "projecao=apenas-nome")
     public List<RestauranteDTO> listarApenasNome() {
         return modelAssembler.toCollectionDTO(repository.findAll());
     }
-     */
 
     @GetMapping
     public ResponseEntity<MappingJacksonValue> listar(@RequestParam(defaultValue = "completo") String projecao) {
@@ -80,7 +81,7 @@ public class RestauranteController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://localhost:8000")
                 .body(restaurantesWrapper);
-    }
+    }*/
 
     @GetMapping("/{id}")
     public RestauranteDTO buscar(@PathVariable Long id) {
