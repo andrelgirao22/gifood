@@ -7,11 +7,16 @@ import br.com.alg.giraofoodapi.api.model.dto.FormaPagamentoDTO;
 import br.com.alg.giraofoodapi.api.model.input.FormaPagamentoInput;
 import br.com.alg.giraofoodapi.domain.service.CadastroFormaPagamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.Duration;
+import java.time.temporal.TemporalUnit;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/formas-pagamento")
@@ -27,13 +32,23 @@ public class FormaPagamentoController {
     private FormaPagamentoInputDisassembler disassembler;
 
     @GetMapping
-    public List<FormaPagamentoDTO> listar() {
-        return assembler.toCollectionDTO(service.lista());
+    public ResponseEntity<List<FormaPagamentoDTO>> listar() {
+
+        List<FormaPagamentoDTO> formasPagamentoDto = assembler.toCollectionDTO(service.lista());
+
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+                .body(formasPagamentoDto);
+
     }
 
     @GetMapping("/{id}")
-    public FormaPagamentoDTO buscar(@PathVariable Long id) {
-        return assembler.toDTO(service.buscar(id));
+    public ResponseEntity<FormaPagamentoDTO> buscar(@PathVariable Long id) {
+        FormaPagamentoDTO formaPagamento = assembler.toDTO(service.buscar(id));
+        return ResponseEntity
+                .ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+                .body(formaPagamento);
     }
 
     @PostMapping
