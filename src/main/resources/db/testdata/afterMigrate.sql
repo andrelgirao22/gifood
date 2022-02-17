@@ -40,9 +40,9 @@ insert into restaurante (id, nome, taxa_frete, cozinha_id, data_cadastro, data_a
 insert into restaurante (id, nome, taxa_frete, cozinha_id, data_cadastro, data_atualizacao, ativo) values (6, 'Bar da Maria', 6, 4, timezone('utc', now()), timezone('utc', now()), true);
 SELECT setval('restaurante_seq', 6);
 
-insert into forma_pagamento (id, descricao) values (1, 'Cartão de crédito');
-insert into forma_pagamento (id, descricao) values (2, 'Cartão de débito');
-insert into forma_pagamento (id, descricao) values (3, 'Dinheiro');
+insert into forma_pagamento (id, descricao, data_atualizacao) values (1, 'Cartão de crédito', timezone('utc', now()));
+insert into forma_pagamento (id, descricao, data_atualizacao) values (2, 'Cartão de débito', timezone('utc', now()));
+insert into forma_pagamento (id, descricao, data_atualizacao) values (3, 'Dinheiro', timezone('utc', now()));
 SELECT setval('forma_pagamento_seq', 3);
 
 

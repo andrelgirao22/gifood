@@ -1,13 +1,19 @@
 package br.com.alg.giraofoodapi.domain.repository;
 
-import br.com.alg.giraofoodapi.domain.model.Cozinha;
 import br.com.alg.giraofoodapi.domain.model.FormaPagamento;
-import lombok.extern.java.Log;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.time.OffsetDateTime;
 
 @Repository
 public interface FormaPagamentoRepository extends JpaRepository<FormaPagamento, Long> {
+
+    @Query("select max(dataAtualizacao) from FormaPagamento")
+    OffsetDateTime getDataUltimaAtualizacao();
+
+    @Query("select dataAtualizacao from FormaPagamento p where p.id = :id")
+    OffsetDateTime getDataUltimaAtualizacao(Long id);
+
 }
