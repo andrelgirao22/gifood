@@ -15,17 +15,13 @@ import br.com.alg.giraofoodapi.domain.repository.PedidoRepository;
 import br.com.alg.giraofoodapi.domain.repository.filter.PedidoFilter;
 import br.com.alg.giraofoodapi.domain.service.EmissaoPedidoService;
 import br.com.alg.giraofoodapi.infrastructure.repository.spec.PedidoSpec;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
