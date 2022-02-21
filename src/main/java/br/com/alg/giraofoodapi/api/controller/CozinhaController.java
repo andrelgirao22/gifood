@@ -20,7 +20,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/cozinhas")
+@RequestMapping(path = "/cozinhas")
 public class CozinhaController {
 
     @Autowired
