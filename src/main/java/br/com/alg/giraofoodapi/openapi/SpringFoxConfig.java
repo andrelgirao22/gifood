@@ -42,7 +42,8 @@ public class SpringFoxConfig  {
                 .globalResponses(HttpMethod.DELETE, globalDeleteResponse())
                 .additionalModels(typeResolver.resolve(Problem.class))
                 .apiInfo(apiInfo())
-                .tags(new Tag("Cidades", "Gerenciar as cidades"));
+                .tags(new Tag("Cidades", "Gerenciar as cidades"),
+                        new Tag("Grupos", "Gerenciar os grupos"));
     }
 
     private List<Response> globalGetResponse() {
