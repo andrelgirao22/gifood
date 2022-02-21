@@ -7,6 +7,7 @@ import br.com.alg.giraofoodapi.api.model.input.FormaPagamentoInput;
 import br.com.alg.giraofoodapi.domain.model.FormaPagamento;
 import br.com.alg.giraofoodapi.domain.repository.FormaPagamentoRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastroFormaPagamentoService;
+import br.com.alg.giraofoodapi.openapi.controller.FormasPagamentoControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/formas-pagamento")
-public class FormaPagamentoController {
+public class FormaPagamentoController implements FormasPagamentoControllerOpenApi {
 
     @Autowired
     private CadastroFormaPagamentoService service;
