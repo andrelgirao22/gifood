@@ -2,7 +2,7 @@ package br.com.alg.giraofoodapi.api.controller;
 
 import br.com.alg.giraofoodapi.api.assembler.GrupoInputDisassembler;
 import br.com.alg.giraofoodapi.api.assembler.GrupoModelAssembler;
-import br.com.alg.giraofoodapi.api.controller.openapi.GrupoControllerOpenApi;
+import br.com.alg.giraofoodapi.openapi.controller.GrupoControllerOpenApi;
 import br.com.alg.giraofoodapi.api.model.dto.GrupoDTO;
 import br.com.alg.giraofoodapi.api.model.input.GrupoInput;
 import br.com.alg.giraofoodapi.domain.model.Grupo;

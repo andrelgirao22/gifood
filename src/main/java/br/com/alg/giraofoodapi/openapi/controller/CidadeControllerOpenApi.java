@@ -1,4 +1,4 @@
-package br.com.alg.giraofoodapi.api.controller.openapi;
+package br.com.alg.giraofoodapi.openapi.controller;
 
 import br.com.alg.giraofoodapi.api.exceptionhandler.Problem;
 import br.com.alg.giraofoodapi.api.model.dto.CidadeDTO;

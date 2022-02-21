@@ -10,6 +10,7 @@ import br.com.alg.giraofoodapi.domain.service.CadastroFormaPagamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -36,7 +37,7 @@ public class FormaPagamentoController {
     @Autowired
     private FormaPagamentoInputDisassembler disassembler;
 
-    @GetMapping
+    @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<FormaPagamentoDTO>> listar(ServletWebRequest request) {
 
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
@@ -65,7 +66,7 @@ public class FormaPagamentoController {
 
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<FormaPagamentoDTO> buscar(ServletWebRequest request, @PathVariable Long id) {
 
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
@@ -90,20 +91,20 @@ public class FormaPagamentoController {
                 .body(formaPagamento);
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public FormaPagamentoDTO salvar(@RequestBody @Valid FormaPagamentoInput formaPagamentoInput) {
         return assembler.toDTO(service.salvar(disassembler.toDomainObject(formaPagamentoInput)));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public FormaPagamentoDTO alterar(@RequestBody FormaPagamentoInput formaPagamentoInput, @PathVariable Long id) {
         FormaPagamento formaPagamentoExistente = service.buscar(id);
         disassembler.copyToDomainInObject(formaPagamentoInput, formaPagamentoExistente);
         return assembler.toDTO(service.salvar(formaPagamentoExistente));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remover(@PathVariable Long id) {
         service.delete(id);

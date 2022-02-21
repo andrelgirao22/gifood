@@ -2,8 +2,7 @@ package br.com.alg.giraofoodapi.api.controller;
 
 import br.com.alg.giraofoodapi.api.assembler.CidadeInputDisassembler;
 import br.com.alg.giraofoodapi.api.assembler.CidadeModelAssembler;
-import br.com.alg.giraofoodapi.api.controller.openapi.CidadeControllerOpenApi;
-import br.com.alg.giraofoodapi.api.exceptionhandler.Problem;
+import br.com.alg.giraofoodapi.openapi.controller.CidadeControllerOpenApi;
 import br.com.alg.giraofoodapi.domain.exception.EntidadeNaoEncontradaException;
 import br.com.alg.giraofoodapi.domain.exception.EstadoNaoEncontradoException;
 import br.com.alg.giraofoodapi.domain.exception.NegocioException;
@@ -12,7 +11,6 @@ import br.com.alg.giraofoodapi.api.model.dto.CidadeDTO;
 import br.com.alg.giraofoodapi.api.model.input.CidadeInput;
 import br.com.alg.giraofoodapi.domain.repository.CidadeRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastroCidadeService;
-import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

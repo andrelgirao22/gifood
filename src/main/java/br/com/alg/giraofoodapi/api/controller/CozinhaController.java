@@ -7,12 +7,14 @@ import br.com.alg.giraofoodapi.api.model.dto.CozinhaDTO;
 import br.com.alg.giraofoodapi.api.model.input.CozinhaInput;
 import br.com.alg.giraofoodapi.domain.repository.CozinhaRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastroCozinhaService;
+import br.com.alg.giraofoodapi.openapi.controller.CozinhaControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +23,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/cozinhas")
-public class CozinhaController {
+public class CozinhaController implements CozinhaControllerOpenApi {
 
     @Autowired
     private CadastroCozinhaService cadastroCozinhaService;
@@ -35,7 +37,7 @@ public class CozinhaController {
     @Autowired
     private CozinhaInputDisassembler disassembler;
 
-    @GetMapping
+    @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public Page<CozinhaDTO> listar(@PageableDefault(size = 10) Pageable pageable) {
         Page<Cozinha> cozinhasPage = repository.findAll(pageable);
         List<CozinhaDTO> cozinhasDTO = assembler.toCollectionDTO(cozinhasPage.getContent());
@@ -43,19 +45,19 @@ public class CozinhaController {
         return cozinhaDTOPage;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public CozinhaDTO buscar(@PathVariable Long id){
         return assembler.toDTO(this.cadastroCozinhaService.buscar(id));
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public CozinhaDTO salvar(@RequestBody @Valid CozinhaInput cozinha) {
         return assembler.toDTO(this.cadastroCozinhaService.salvar(disassembler.toDomainObject(cozinha)));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Cozinha atualizar(@PathVariable Long id, @RequestBody @Valid CozinhaInput cozinhaInput) {
         Cozinha cozinhaExistente = this.cadastroCozinhaService.buscar(id);
         //BeanUtils.copyProperties(cozinhaInput, cozinhaExistente, "id");
@@ -63,7 +65,7 @@ public class CozinhaController {
         return this.cadastroCozinhaService.salvar(cozinhaExistente);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void remover(@PathVariable Long id) {
         this.cadastroCozinhaService.excluir(id);
