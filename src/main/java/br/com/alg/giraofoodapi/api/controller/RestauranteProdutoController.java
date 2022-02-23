@@ -10,6 +10,7 @@ import br.com.alg.giraofoodapi.domain.model.Restaurante;
 import br.com.alg.giraofoodapi.domain.repository.ProdutoRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastroProdutoService;
 import br.com.alg.giraofoodapi.domain.service.CadastrosRestauranteService;
+import br.com.alg.giraofoodapi.openapi.controller.RestauranteProdutoControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/restaurantes/{id}/produtos")
-public class RestauranteProdutoController {
+public class RestauranteProdutoController implements RestauranteProdutoControllerOpenApi {
 
     @Autowired
     private CadastrosRestauranteService restauranteService;
@@ -51,6 +52,13 @@ public class RestauranteProdutoController {
         return produtoModelAssembler.toCollectionDTO(todosProdutos);
     }
 
+    @Override
+    @GetMapping("/{produtoId}")
+    public ProdutoDTO buscar(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
+        Produto produto = produtoService.buscarPeloRestaurante(produtoId, restauranteId);
+        return produtoModelAssembler.toDTO(produto);
+    }
+
     @PostMapping("/{produtoID}")
     public ProdutoDTO adicionar(@PathVariable Long id, @RequestBody @Valid ProdutoInput produtoInput) {
         Restaurante restaurante = restauranteService.buscar(id);
@@ -61,7 +69,7 @@ public class RestauranteProdutoController {
 
     @PutMapping("/{produtoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ProdutoDTO alterar(@PathVariable Long id, @PathVariable Long produtoId, @RequestBody @Valid ProdutoInput produtoInput) {
+    public ProdutoDTO atualizar(@PathVariable Long id, @PathVariable Long produtoId, @RequestBody @Valid ProdutoInput produtoInput) {
         Produto produtoAtual = produtoService.buscar(produtoId);
         produtoInputDisassembler.copyToDomainInObject(produtoInput, produtoAtual);
         produtoAtual = produtoService.salvar(produtoAtual);

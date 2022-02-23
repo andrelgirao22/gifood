@@ -7,6 +7,7 @@ import br.com.alg.giraofoodapi.api.model.dto.EstadoDTO;
 import br.com.alg.giraofoodapi.api.model.input.EstadoInput;
 import br.com.alg.giraofoodapi.domain.repository.EstadoRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastroEstadoService;
+import br.com.alg.giraofoodapi.openapi.controller.EstadoControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/estados")
-public class EstadoController {
+public class EstadoController implements EstadoControllerOpenApi {
 
     @Autowired
     private CadastroEstadoService service;
@@ -37,26 +38,26 @@ public class EstadoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EstadoDTO> buscar(@PathVariable Long id) {
+    public EstadoDTO buscar(@PathVariable Long id) {
         Estado estado = this.service.buscar(id);
         if(estado == null) ResponseEntity.notFound().build();
-        return ResponseEntity.ok(assembler.toDTO(estado));
+        return assembler.toDTO(estado);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Estado salvar(@RequestBody @Valid EstadoInput estado) {
-        return this.service.salvar(disassembler.toDomainObject(estado));
+    public EstadoDTO adicionar(@RequestBody @Valid EstadoInput estado) {
+        return assembler.toDTO(this.service.salvar(disassembler.toDomainObject(estado)));
     }
 
     @PutMapping("/{id}")
-    public EstadoDTO alterar(@PathVariable Long id, @RequestBody @Valid EstadoInput estado) {
+    public EstadoDTO atualizar(@PathVariable Long id, @RequestBody @Valid EstadoInput estado) {
         return assembler.toDTO(this.service.alterar(id, disassembler.toDomainObject(estado)));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public void remover(@PathVariable Long id) {
         this.service.excluir(id);
     }
 }

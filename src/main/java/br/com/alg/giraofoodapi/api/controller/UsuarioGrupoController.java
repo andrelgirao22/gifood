@@ -1,11 +1,10 @@
 package br.com.alg.giraofoodapi.api.controller;
 
 import br.com.alg.giraofoodapi.api.assembler.GrupoModelAssembler;
-import br.com.alg.giraofoodapi.api.assembler.UsuarioModelAssembler;
 import br.com.alg.giraofoodapi.api.model.dto.GrupoDTO;
 import br.com.alg.giraofoodapi.domain.model.Usuario;
-import br.com.alg.giraofoodapi.domain.repository.UsuarioRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastroUsuarioService;
+import br.com.alg.giraofoodapi.openapi.controller.UsuarioGrupoControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/usuarios/{id}/grupos")
-public class UsuarioGrupoController {
+public class UsuarioGrupoController implements UsuarioGrupoControllerOpenApi {
 
 
     @Autowired
@@ -31,13 +30,13 @@ public class UsuarioGrupoController {
 
     @DeleteMapping("/{grupoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void desassociarGrupo(@PathVariable Long id, @PathVariable Long grupoId) {
+    public void desassociar(@PathVariable Long id, @PathVariable Long grupoId) {
         usuarioService.desassociarGrupo(id, grupoId);
     }
 
     @PutMapping("/{grupoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void associarGrupo(@PathVariable Long id, @PathVariable Long grupoId) {
+    public void associar(@PathVariable Long id, @PathVariable Long grupoId) {
         usuarioService.associarGrupo(id, grupoId);
     }
 

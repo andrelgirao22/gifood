@@ -1,13 +1,14 @@
 package br.com.alg.giraofoodapi.api.controller;
 
 import br.com.alg.giraofoodapi.domain.service.FluxoPedidoService;
+import br.com.alg.giraofoodapi.openapi.controller.FluxoPedidoControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/pedidos/{pedidoId}")
-public class FluxoPedidoController {
+public class FluxoPedidoController implements FluxoPedidoControllerOpenApi {
 
     @Autowired
     private FluxoPedidoService pedidoService;

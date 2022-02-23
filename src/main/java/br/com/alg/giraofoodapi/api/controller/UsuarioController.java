@@ -16,6 +16,7 @@ import br.com.alg.giraofoodapi.domain.repository.GrupoRepository;
 import br.com.alg.giraofoodapi.domain.repository.UsuarioRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastroGrupoService;
 import br.com.alg.giraofoodapi.domain.service.CadastroUsuarioService;
+import br.com.alg.giraofoodapi.openapi.controller.UsuarioControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/usuarios")
-public class UsuarioController {
+public class UsuarioController implements UsuarioControllerOpenApi {
 
     @Autowired
     private UsuarioRepository repository;
@@ -51,12 +52,12 @@ public class UsuarioController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UsuarioDTO salvar(@RequestBody @Valid UsuarioInputComSenha usuario) {
+    public UsuarioDTO adicionar(@RequestBody @Valid UsuarioInputComSenha usuario) {
         return assembler.toDTO(usuarioService.salvar(disassembler.toDomainObject(usuario)));
     }
 
     @PutMapping("/{id}")
-    public UsuarioDTO alterar(@RequestBody @Valid UsuarioInput input, @PathVariable Long id) {
+    public UsuarioDTO atualizar(@PathVariable Long id, @RequestBody @Valid UsuarioInput input) {
 
         Usuario usuarioExistente = usuarioService.buscar(id);
         disassembler.copyToDomainInObject(input, usuarioExistente);

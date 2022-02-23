@@ -5,6 +5,7 @@ import br.com.alg.giraofoodapi.api.assembler.RestauranteInputDisassembler;
 import br.com.alg.giraofoodapi.api.model.dto.FormaPagamentoDTO;
 import br.com.alg.giraofoodapi.domain.model.Restaurante;
 import br.com.alg.giraofoodapi.domain.service.CadastrosRestauranteService;
+import br.com.alg.giraofoodapi.openapi.controller.RestauranteFormaPagamentoControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/restaurantes/{id}/formas-pagamento")
-public class RestauranteFormaPagamentoController {
+public class RestauranteFormaPagamentoController implements RestauranteFormaPagamentoControllerOpenApi {
 
     @Autowired
     private CadastrosRestauranteService restauranteService;
@@ -32,7 +33,7 @@ public class RestauranteFormaPagamentoController {
 
     @PutMapping("/{formaPagamentoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void associarFormaPagamento(@PathVariable Long id, @PathVariable Long formaPagamentoId) {
+    public void associar(@PathVariable Long id, @PathVariable Long formaPagamentoId) {
         restauranteService.associarFormaPagamento(id, formaPagamentoId);
     }
 
