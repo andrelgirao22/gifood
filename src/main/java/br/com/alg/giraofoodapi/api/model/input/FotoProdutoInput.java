@@ -3,6 +3,7 @@ package br.com.alg.giraofoodapi.api.model.input;
 
 import br.com.alg.giraofoodapi.core.validation.FileContentType;
 import br.com.alg.giraofoodapi.core.validation.FileSize;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.MediaType;
@@ -15,11 +16,13 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class FotoProdutoInput {
 
+    @ApiModelProperty(hidden = true)
     @NotNull
-    @FileContentType(allowed = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE })
-    @FileSize(max = "3000KB")
+    @FileSize(max = "500KB")
+    @FileContentType(allowed = { MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE })
     private MultipartFile arquivo;
 
+    @ApiModelProperty(value = "Descrição da foto do produto", required = true)
     @NotBlank
     private String descricao;
 }

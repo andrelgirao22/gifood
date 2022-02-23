@@ -10,6 +10,7 @@ import br.com.alg.giraofoodapi.domain.service.CadastroProdutoService;
 import br.com.alg.giraofoodapi.domain.service.CatalogoFotoProdutoService;
 import br.com.alg.giraofoodapi.domain.service.FotoStorageService;
 import br.com.alg.giraofoodapi.domain.service.FotoStorageService.FotoRecuperada;
+import br.com.alg.giraofoodapi.openapi.controller.RestauranteProdutoFotoControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -27,7 +28,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/restaurantes/{restauranteId}/produtos/{produtoId}/foto")
-public class RestauranteProdutoFotoController {
+public class RestauranteProdutoFotoController implements RestauranteProdutoFotoControllerOpenApi {
 
     @Autowired
     private CatalogoFotoProdutoService produtoService;
@@ -41,14 +42,17 @@ public class RestauranteProdutoFotoController {
     @Autowired
     private FotoProdutoModelAssembler assembler;
 
+    @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public FotoProdutoDTO buscar(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
+    public FotoProdutoDTO buscar(@PathVariable Long restauranteId,
+                                   @PathVariable Long produtoId) {
         FotoProduto fotoProduto = produtoService.buscar(restauranteId, produtoId);
+
         return assembler.toDTO(fotoProduto);
     }
 
-    @GetMapping
-    public ResponseEntity<?> servirFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId,
+    @GetMapping(produces = MediaType.ALL_VALUE)
+    public ResponseEntity<?> servir(@PathVariable Long restauranteId, @PathVariable Long produtoId,
                                                           @RequestHeader("accept") String acceptHeader) throws HttpMediaTypeNotAcceptableException {
         try {
             FotoProduto fotoProduto = produtoService.buscar(restauranteId, produtoId);
@@ -86,11 +90,13 @@ public class RestauranteProdutoFotoController {
 
     @PutMapping
     public FotoProdutoDTO atualizarFoto(@PathVariable Long restauranteId,
-                                        @PathVariable Long produtoId, @Valid FotoProdutoInput fotoProdutoInput) throws IOException {
+                                        @PathVariable Long produtoId,
+                                        @Valid FotoProdutoInput fotoProdutoInput,
+                                        @RequestPart(required = true) MultipartFile arquivo)  throws IOException {
 
         Produto produto = cadastroProdutoService.buscarPeloRestaurante(restauranteId, produtoId);
 
-        MultipartFile arquivo = fotoProdutoInput.getArquivo();
+        //MultipartFile arquivo = fotoProdutoInput.getArquivo();
 
         FotoProduto fotoProduto = new FotoProduto();
         fotoProduto.setProduto(produto);
@@ -106,7 +112,7 @@ public class RestauranteProdutoFotoController {
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
+    public void excluir(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
         produtoService.excluir(restauranteId, produtoId);
     }
 

@@ -4,6 +4,7 @@ import br.com.alg.giraofoodapi.domain.filter.VendaDiariaFilter;
 import br.com.alg.giraofoodapi.domain.model.VendaDiaria;
 import br.com.alg.giraofoodapi.domain.service.VendaQueryService;
 import br.com.alg.giraofoodapi.domain.service.VendaReportService;
+import br.com.alg.giraofoodapi.openapi.controller.EstatisticasControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -16,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/estatisticas")
-public class EstatisticasController {
+public class EstatisticasController implements EstatisticasControllerOpenApi {
 
     @Autowired
     private VendaQueryService vendaQueryService;
@@ -25,12 +26,12 @@ public class EstatisticasController {
     private VendaReportService reportService;
 
     @GetMapping(value = "/vendas-diarias", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<VendaDiaria> consutarVendasDiarias(VendaDiariaFilter filtro) {
+    public List<VendaDiaria> consultarVendasDiarias(VendaDiariaFilter filtro) {
         return vendaQueryService.consultarVendasDiarias(filtro);
     }
 
     @GetMapping(value = "/vendas-diarias", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<byte[]> consutarVendasDiariasPdf(VendaDiariaFilter filtro) {
+    public ResponseEntity<byte[]> consultarVendasDiariasPdf(VendaDiariaFilter filtro) {
         byte[] bytesPdf = reportService.emitirVendasDiarias(filtro);
 
         var headers = new HttpHeaders();

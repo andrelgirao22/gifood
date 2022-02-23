@@ -11,6 +11,7 @@ import br.com.alg.giraofoodapi.domain.model.Permissao;
 import br.com.alg.giraofoodapi.domain.repository.GrupoRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastroGrupoService;
 import br.com.alg.giraofoodapi.domain.service.CadastroPermissaoService;
+import br.com.alg.giraofoodapi.openapi.controller.GrupoPermissaoControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/grupos/{id}/permissoes")
-public class GrupoPermissaoController {
+public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi {
 
     @Autowired
     private GrupoRepository repository;
@@ -54,7 +55,7 @@ public class GrupoPermissaoController {
 
     @DeleteMapping("/{permissaoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void remover(@PathVariable Long id, @PathVariable Long permissaoId) {
+    public void desassociar(@PathVariable Long id, @PathVariable Long permissaoId) {
         grupoService.desassociarPermissao(id, permissaoId);
     }
 
