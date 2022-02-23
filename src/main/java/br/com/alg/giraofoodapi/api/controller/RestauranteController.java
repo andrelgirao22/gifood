@@ -13,9 +13,14 @@ import br.com.alg.giraofoodapi.domain.exception.RestauranteNaoEncontradoExceptio
 import br.com.alg.giraofoodapi.domain.model.Restaurante;
 import br.com.alg.giraofoodapi.domain.repository.RestauranteRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastrosRestauranteService;
+import br.com.alg.giraofoodapi.openapi.controller.RestauranteControllerOpenApi;
+import br.com.alg.giraofoodapi.openapi.model.RestauranteBasicoModelOpenApi;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,7 +41,7 @@ import java.util.Map;
 //@CrossOrigin(maxAge = 20)
 @RestController
 @RequestMapping("/restaurantes")
-public class RestauranteController {
+public class RestauranteController implements RestauranteControllerOpenApi {
 
     @Autowired
     private RestauranteRepository repository;
@@ -53,16 +58,16 @@ public class RestauranteController {
     @Autowired
     private RestauranteInputDisassembler restauranteInputDisassembler;
 
-
     @JsonView(RestauranteView.Resumo.class)
-    @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping
     public List<RestauranteDTO> listarResumo() {
         return modelAssembler.toCollectionDTO(repository.findAll());
     }
 
 
+    @ApiOperation(value = "Lista restaurantes", hidden = true)
     @JsonView(RestauranteView.ApenasNome.class)
-    @GetMapping(params = "projecao=apenas-nome", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(params = "projecao=apenas-nome")
     public List<RestauranteDTO> listarApenasNome() {
         return modelAssembler.toCollectionDTO(repository.findAll());
     }
@@ -133,7 +138,7 @@ public class RestauranteController {
 
     @PutMapping(path = "/ativacoes", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void ativarMultiples(@RequestBody List<Long> ids) {
+    public void ativarMultiplos(@RequestBody List<Long> ids) {
         try {
             restauranteService.ativar(ids);
         }catch (RestauranteNaoEncontradoException e) {
@@ -143,7 +148,7 @@ public class RestauranteController {
 
     @DeleteMapping(path = "/inativacoes", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void inativarMultiples(@RequestBody List<Long> ids) {
+    public void inativarMultiplos(@RequestBody List<Long> ids) {
         try {
             restauranteService.inativar(ids);
         }catch (RestauranteNaoEncontradoException e) {

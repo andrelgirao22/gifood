@@ -75,7 +75,8 @@ public class SpringFoxConfig  {
                         new Tag("Grupos", "Gerencia os grupos"),
                         new Tag("Cozinhas", "Gerencia as cozinhas"),
                         new Tag("Formas Pagamento", "Gerencia as formas de pagamento"),
-                        new Tag("Pedidos", "Gerencia os pedidos"));
+                        new Tag("Pedidos", "Gerencia os pedidos"),
+                        new Tag("Restaurantes", "Gerencia os restaurantes"));
     }
 
     private List<Response> globalGetResponse() {
