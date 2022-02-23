@@ -1,17 +1,16 @@
-package br.com.alg.giraofoodapi.api.model.dto;
+package br.com.alg.giraofoodapi.api.model.input;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 @Setter
-public class RestauranteResumoDTO {
+public class CidadeIdInput {
 
     @ApiModelProperty(example = "1", required = true)
+    @NotNull
     private Long id;
-
-    @ApiModelProperty(example = "Santa Grelha", required = true)
-    private String nome;
-
 }

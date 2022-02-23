@@ -23,6 +23,7 @@ public class PedidoInput {
     @Valid
     @NotNull
     private FormaPagamentoIdInput formaPagamento;
+
     @Valid
     @Size(min = 1)
     @NotNull

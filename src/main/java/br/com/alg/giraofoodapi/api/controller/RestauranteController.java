@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
@@ -54,19 +55,18 @@ public class RestauranteController {
 
 
     @JsonView(RestauranteView.Resumo.class)
-    @GetMapping
+    @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<RestauranteDTO> listarResumo() {
         return modelAssembler.toCollectionDTO(repository.findAll());
     }
 
-    /*
 
     @JsonView(RestauranteView.ApenasNome.class)
-    @GetMapping(params = "projecao=apenas-nome")
+    @GetMapping(params = "projecao=apenas-nome", consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<RestauranteDTO> listarApenasNome() {
         return modelAssembler.toCollectionDTO(repository.findAll());
     }
-
+/*
     @GetMapping
     public ResponseEntity<MappingJacksonValue> listar(@RequestParam(defaultValue = "completo") String projecao) {
         List<Restaurante> restaurantes = repository.findAll();
@@ -83,7 +83,7 @@ public class RestauranteController {
                 .body(restaurantesWrapper);
     }*/
 
-    @GetMapping("/{id}")
+    @GetMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public RestauranteDTO buscar(@PathVariable Long id) {
         Restaurante restaurante = this.repository.findById(id).orElseThrow(()->
                 new RestauranteNaoEncontradoException(id));
@@ -92,7 +92,7 @@ public class RestauranteController {
         return restauranteDTO;
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public RestauranteDTO adicionar(@RequestBody @Valid RestauranteInput restaurante) {
         try {
@@ -102,7 +102,7 @@ public class RestauranteController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public RestauranteDTO atualizar(@PathVariable Long id,
                                      @RequestBody @Valid RestauranteInput restauranteInput) {
@@ -119,19 +119,19 @@ public class RestauranteController {
         }
     }
 
-    @PutMapping("/{id}/ativo")
+    @PutMapping(path = "/{id}/ativo", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void ativar(@PathVariable Long id) {
         restauranteService.ativar(id);
     }
 
-    @DeleteMapping("/{id}/inativar")
+    @DeleteMapping(path = "/{id}/inativar", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void inativar(@PathVariable Long id) {
         restauranteService.inativar(id);
     }
 
-    @PutMapping("/ativacoes")
+    @PutMapping(path = "/ativacoes", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void ativarMultiples(@RequestBody List<Long> ids) {
         try {
@@ -141,7 +141,7 @@ public class RestauranteController {
         }
     }
 
-    @DeleteMapping("/inativacoes")
+    @DeleteMapping(path = "/inativacoes", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void inativarMultiples(@RequestBody List<Long> ids) {
         try {
@@ -151,13 +151,13 @@ public class RestauranteController {
         }
     }
 
-    @PutMapping("/{id}/aberto")
+    @PutMapping(path = "/{id}/aberto", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void abrir(@PathVariable Long id) {
         restauranteService.abrirRestaurante(id);
     }
 
-    @PutMapping("/{id}/fechamento")
+    @PutMapping(path = "/{id}/fechamento", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void fechar(@PathVariable Long id) {
         restauranteService.fecharRestaurante(id);

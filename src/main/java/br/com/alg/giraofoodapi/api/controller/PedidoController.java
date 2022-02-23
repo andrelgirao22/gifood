@@ -15,13 +15,17 @@ import br.com.alg.giraofoodapi.domain.repository.PedidoRepository;
 import br.com.alg.giraofoodapi.domain.repository.filter.PedidoFilter;
 import br.com.alg.giraofoodapi.domain.service.EmissaoPedidoService;
 import br.com.alg.giraofoodapi.infrastructure.repository.spec.PedidoSpec;
+import br.com.alg.giraofoodapi.openapi.controller.PedidoControllerOpenApi;
 import com.google.common.collect.ImmutableMap;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,7 +33,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/pedidos")
-public class PedidoController {
+public class PedidoController implements PedidoControllerOpenApi {
 
     @Autowired
     private PedidoRepository repository;
@@ -46,7 +50,7 @@ public class PedidoController {
     @Autowired
     private PedidoInputDisassembler disassembler;
 
-    @GetMapping
+    @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public Page<PedidoResumoDTO> pesquisar(PedidoFilter filtro, @PageableDefault(size = 10) Pageable pageable) {
 
         pageable = traduzirPageable(pageable);
@@ -73,12 +77,12 @@ public class PedidoController {
 //        return mappingJacksonValue;
 //    }
 
-    @GetMapping("/{id}")
+    @GetMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public PedidoDTO buscar(@PathVariable String id) {
         return pedidoModelAssembler.toDTO(pedidoService.buscar(id));
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public PedidoDTO adicionar(@Valid @RequestBody PedidoInput pedidoInput) {
         try {

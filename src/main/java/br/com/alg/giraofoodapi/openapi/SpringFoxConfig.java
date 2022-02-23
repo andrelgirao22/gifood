@@ -2,8 +2,10 @@ package br.com.alg.giraofoodapi.openapi;
 
 import br.com.alg.giraofoodapi.api.exceptionhandler.Problem;
 import br.com.alg.giraofoodapi.api.model.dto.CozinhaDTO;
+import br.com.alg.giraofoodapi.api.model.dto.PedidoDTO;
 import br.com.alg.giraofoodapi.openapi.model.CozinhasModelOpenApi;
 import br.com.alg.giraofoodapi.openapi.model.PageableModelOpenApi;
+import br.com.alg.giraofoodapi.openapi.model.PedidoModelOpenApi;
 import com.fasterxml.classmate.TypeResolver;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
@@ -19,10 +21,9 @@ import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration
 import springfox.documentation.builders.*;
 import springfox.documentation.schema.AlternateTypeRule;
 import springfox.documentation.schema.AlternateTypeRules;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
-import springfox.documentation.service.Response;
-import springfox.documentation.service.Tag;
+import springfox.documentation.schema.ModelSpecification;
+import springfox.documentation.schema.ScalarType;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.json.JacksonModuleRegistrar;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -48,6 +49,16 @@ public class SpringFoxConfig  {
                 .globalResponses(HttpMethod.POST, globalPostResponse())
                 .globalResponses(HttpMethod.PUT, globalPutResponse())
                 .globalResponses(HttpMethod.DELETE, globalDeleteResponse())
+//                .globalRequestParameters(Arrays.asList(
+//                        new RequestParameterBuilder()
+//                                .name("campos")
+//                                .description("Nomes das propriedades para filtrar na resposta, separados por vírgula")
+//                                .in(ParameterType.QUERY)
+//                                .required(true)
+//                                .query(q -> q.model(m -> m.scalarModel(ScalarType.STRING)))
+//                                .build()
+//                        )
+//                )
                 .additionalModels(typeResolver.resolve(Problem.class))
                 .ignoredParameterTypes(ServletWebRequest.class)
                 .directModelSubstitute(Pageable.class, PageableModelOpenApi.class)
@@ -55,11 +66,16 @@ public class SpringFoxConfig  {
                         typeResolver.resolve(Page.class, CozinhaDTO.class),
                         CozinhasModelOpenApi.class
                 ))
+                .alternateTypeRules(AlternateTypeRules.newRule(
+                        typeResolver.resolve(Page.class, PedidoDTO.class),
+                        PedidoModelOpenApi.class
+                ))
                 .apiInfo(apiInfo())
-                .tags(new Tag("Cidades", "Gerenciar as cidades"),
-                        new Tag("Grupos", "Gerenciar os grupos"),
-                        new Tag("Cozinhas", "Gerenciar as cozinhas"),
-                        new Tag("Formas Pagamento", "Gerenciar as formas de pagamento"));
+                .tags(new Tag("Cidades", "Gerencia as cidades"),
+                        new Tag("Grupos", "Gerencia os grupos"),
+                        new Tag("Cozinhas", "Gerencia as cozinhas"),
+                        new Tag("Formas Pagamento", "Gerencia as formas de pagamento"),
+                        new Tag("Pedidos", "Gerencia os pedidos"));
     }
 
     private List<Response> globalGetResponse() {
