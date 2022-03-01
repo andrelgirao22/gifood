@@ -14,7 +14,8 @@ public class Cidade {
 
 
     @EqualsAndHashCode.Include
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cidade_seq")
+    @SequenceGenerator(name = "cidade_seq", sequenceName = "cidade_seq", allocationSize = 1)
     private Long id;
 
     @Column(nullable = false)

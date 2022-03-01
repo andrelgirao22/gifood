@@ -29,7 +29,7 @@ public interface CidadeControllerOpenApi {
     @ApiResponses({
             @ApiResponse(code = 201, message = "Cidade cadastrada")
     })
-    Cidade salvar(
+    CidadeDTO salvar(
             @ApiParam(name = "corpo", value = "Representação de uma nova cidade", required = true)
             @RequestBody @Valid CidadeInput cidade);
 

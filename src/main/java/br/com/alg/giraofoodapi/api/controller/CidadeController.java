@@ -1,5 +1,6 @@
 package br.com.alg.giraofoodapi.api.controller;
 
+import br.com.alg.giraofoodapi.api.ResourceUriHelper;
 import br.com.alg.giraofoodapi.api.assembler.CidadeInputDisassembler;
 import br.com.alg.giraofoodapi.api.assembler.CidadeModelAssembler;
 import br.com.alg.giraofoodapi.openapi.controller.CidadeControllerOpenApi;
@@ -12,11 +13,17 @@ import br.com.alg.giraofoodapi.api.model.input.CidadeInput;
 import br.com.alg.giraofoodapi.domain.repository.CidadeRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastroCidadeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -40,16 +47,21 @@ public class CidadeController implements CidadeControllerOpenApi {
         return assembler.toCollectionDTO(this.repository.findAll());
     }
 
-    @GetMapping(path = "/{cidadeId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{cidadeId}")
     public CidadeDTO buscarPorId(@PathVariable Long cidadeId) {
         return assembler.toDTO(service.buscar(cidadeId));
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Cidade salvar(@RequestBody @Valid CidadeInput cidade) {
+    public CidadeDTO salvar(@RequestBody @Valid CidadeInput cidadeInput) {
         try{
-            return service.salvar(disassembler.toDomainObject(cidade));
+            Cidade cidade = disassembler.toDomainObject(cidadeInput);
+            cidade = service.salvar(cidade);
+
+            CidadeDTO cidadeDTO = assembler.toDTO(cidade);
+            ResourceUriHelper.addUriInResponseHeader(cidadeDTO.getId());
+            return cidadeDTO;
         } catch (EstadoNaoEncontradoException e) {
             throw new NegocioException(e.getMessage());
         }
