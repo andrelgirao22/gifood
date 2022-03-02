@@ -1,10 +1,5 @@
 package br.com.alg.giraofoodapi.openapi.controller;
 
-import br.com.alg.giraofoodapi.api.exceptionhandler.Problem;
-import br.com.alg.giraofoodapi.api.model.dto.UsuarioDTO;
-import br.com.alg.giraofoodapi.api.model.input.SenhaInput;
-import br.com.alg.giraofoodapi.api.model.input.UsuarioInput;
-import br.com.alg.giraofoodapi.api.model.input.UsuarioInputComSenha;
 import br.com.alg.giraofoodapi.domain.filter.VendaDiariaFilter;
 import br.com.alg.giraofoodapi.domain.model.VendaDiaria;
 import io.swagger.annotations.*;

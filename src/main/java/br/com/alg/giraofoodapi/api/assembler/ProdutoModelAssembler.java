@@ -1,9 +1,7 @@
 package br.com.alg.giraofoodapi.api.assembler;
 
 import br.com.alg.giraofoodapi.api.model.dto.ProdutoDTO;
-import br.com.alg.giraofoodapi.api.model.dto.UsuarioDTO;
 import br.com.alg.giraofoodapi.domain.model.Produto;
-import br.com.alg.giraofoodapi.domain.model.Usuario;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

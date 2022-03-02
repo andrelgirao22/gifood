@@ -13,6 +13,10 @@ import br.com.alg.giraofoodapi.api.model.input.CidadeInput;
 import br.com.alg.giraofoodapi.domain.repository.CidadeRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastroCidadeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.Link;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,14 +46,17 @@ public class CidadeController implements CidadeControllerOpenApi {
     @Autowired
     private CidadeInputDisassembler disassembler;
 
-    @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<CidadeDTO> listar() {
-        return assembler.toCollectionDTO(this.repository.findAll());
+    @GetMapping
+    public CollectionModel<CidadeDTO> listar() {
+        return assembler.toCollectionModel(this.repository.findAll());
     }
 
     @GetMapping(path = "/{cidadeId}")
     public CidadeDTO buscarPorId(@PathVariable Long cidadeId) {
-        return assembler.toDTO(service.buscar(cidadeId));
+        Cidade cidade = service.buscar(cidadeId);
+        CidadeDTO cidadeDTO = assembler.toModel(cidade);
+        return cidadeDTO;
+
     }
 
     @PostMapping
@@ -59,7 +66,7 @@ public class CidadeController implements CidadeControllerOpenApi {
             Cidade cidade = disassembler.toDomainObject(cidadeInput);
             cidade = service.salvar(cidade);
 
-            CidadeDTO cidadeDTO = assembler.toDTO(cidade);
+            CidadeDTO cidadeDTO = assembler.toModel(cidade);
             ResourceUriHelper.addUriInResponseHeader(cidadeDTO.getId());
             return cidadeDTO;
         } catch (EstadoNaoEncontradoException e) {

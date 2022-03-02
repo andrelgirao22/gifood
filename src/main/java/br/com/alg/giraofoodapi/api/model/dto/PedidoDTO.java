@@ -1,7 +1,5 @@
 package br.com.alg.giraofoodapi.api.model.dto;
 
-import br.com.alg.giraofoodapi.domain.model.FormaPagamento;
-import br.com.alg.giraofoodapi.domain.model.ItemPedido;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,7 +40,7 @@ public class PedidoDTO {
 
     private FormaPagamentoDTO formaPagamento;
     private RestauranteResumoDTO restaurante;
-    private UsuarioDTO cliente;
+    private UsuarioModel cliente;
 
     private List<ItemPedidoDTO> itens;
     private EnderecoDTO endereco;

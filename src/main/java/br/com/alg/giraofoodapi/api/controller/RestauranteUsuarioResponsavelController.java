@@ -1,12 +1,13 @@
 package br.com.alg.giraofoodapi.api.controller;
 
 import br.com.alg.giraofoodapi.api.assembler.UsuarioModelAssembler;
-import br.com.alg.giraofoodapi.api.model.dto.UsuarioDTO;
+import br.com.alg.giraofoodapi.api.model.dto.UsuarioModel;
 import br.com.alg.giraofoodapi.domain.model.Restaurante;
 import br.com.alg.giraofoodapi.domain.service.CadastroUsuarioService;
 import br.com.alg.giraofoodapi.domain.service.CadastrosRestauranteService;
 import br.com.alg.giraofoodapi.openapi.controller.RestauranteUsuarioResponsavelControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,9 +27,9 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
     private CadastroUsuarioService usuarioService;
 
     @GetMapping
-    public List<UsuarioDTO> listar(@PathVariable Long id) {
+    public CollectionModel<UsuarioModel> listar(@PathVariable Long id) {
         Restaurante restaurante = restauranteService.buscar(id);
-        return assembler.toCollectionDTO(restaurante.getUsuarios());
+        return assembler.toCollectionModel(restaurante.getUsuarios());
     }
 
     @DeleteMapping("/{usuarioId}")

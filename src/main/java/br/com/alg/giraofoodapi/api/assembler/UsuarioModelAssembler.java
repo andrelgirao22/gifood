@@ -1,17 +1,18 @@
 package br.com.alg.giraofoodapi.api.assembler;
 
-import br.com.alg.giraofoodapi.api.model.dto.UsuarioDTO;
+import br.com.alg.giraofoodapi.api.controller.UsuarioController;
+import br.com.alg.giraofoodapi.api.controller.UsuarioGrupoController;
+import br.com.alg.giraofoodapi.api.model.dto.UsuarioModel;
 import br.com.alg.giraofoodapi.domain.model.Usuario;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Component
-public class UsuarioModelAssembler {
+public class UsuarioModelAssembler extends RepresentationModelAssemblerSupport<Usuario, UsuarioModel> {
 
     @Autowired
     private ModelMapper modelMapper;
@@ -19,12 +20,28 @@ public class UsuarioModelAssembler {
     @Autowired
     private UsuarioModelAssembler assembler;
 
-
-    public UsuarioDTO toDTO(Usuario usuario) {
-        return modelMapper.map(usuario, UsuarioDTO.class);
+    public UsuarioModelAssembler() {
+        super(UsuarioController.class, UsuarioModel.class);
     }
 
-    public List<UsuarioDTO> toCollectionDTO(Collection<Usuario> usuarios) {
-        return usuarios.stream().map(usuario -> assembler.toDTO(usuario)).collect(Collectors.toList());
+
+    @Override
+    public UsuarioModel toModel(Usuario usuario) {
+
+        UsuarioModel usuarioModel = createModelWithId(usuario.getId(), usuario);
+        modelMapper.map(usuario, usuarioModel);
+
+        usuarioModel.add(linkTo(UsuarioController.class).withRel("usuarios"));
+
+        usuarioModel.add(linkTo(methodOn(UsuarioGrupoController.class)
+                .listar(usuarioModel.getId())).withRel("grupos-usuario"));
+
+        return usuarioModel;
+    }
+
+    @Override
+    public CollectionModel<UsuarioModel> toCollectionModel(Iterable<? extends Usuario> usuarios) {
+        return super.toCollectionModel(usuarios)
+                .add(linkTo(UsuarioController.class).withSelfRel());
     }
 }

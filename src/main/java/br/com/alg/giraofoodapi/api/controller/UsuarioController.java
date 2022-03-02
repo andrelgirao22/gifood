@@ -1,23 +1,17 @@
 package br.com.alg.giraofoodapi.api.controller;
 
-import br.com.alg.giraofoodapi.api.assembler.GrupoInputDisassembler;
-import br.com.alg.giraofoodapi.api.assembler.GrupoModelAssembler;
 import br.com.alg.giraofoodapi.api.assembler.UsuarioInputDisassembler;
 import br.com.alg.giraofoodapi.api.assembler.UsuarioModelAssembler;
-import br.com.alg.giraofoodapi.api.model.dto.GrupoDTO;
-import br.com.alg.giraofoodapi.api.model.dto.UsuarioDTO;
-import br.com.alg.giraofoodapi.api.model.input.GrupoInput;
+import br.com.alg.giraofoodapi.api.model.dto.UsuarioModel;
 import br.com.alg.giraofoodapi.api.model.input.SenhaInput;
 import br.com.alg.giraofoodapi.api.model.input.UsuarioInput;
 import br.com.alg.giraofoodapi.api.model.input.UsuarioInputComSenha;
-import br.com.alg.giraofoodapi.domain.model.Grupo;
 import br.com.alg.giraofoodapi.domain.model.Usuario;
-import br.com.alg.giraofoodapi.domain.repository.GrupoRepository;
 import br.com.alg.giraofoodapi.domain.repository.UsuarioRepository;
-import br.com.alg.giraofoodapi.domain.service.CadastroGrupoService;
 import br.com.alg.giraofoodapi.domain.service.CadastroUsuarioService;
 import br.com.alg.giraofoodapi.openapi.controller.UsuarioControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,27 +35,28 @@ public class UsuarioController implements UsuarioControllerOpenApi {
     private UsuarioInputDisassembler disassembler;
 
     @GetMapping
-    public List<UsuarioDTO> listar() {
-        return assembler.toCollectionDTO(repository.findAll());
+    public CollectionModel<UsuarioModel> listar() {
+        CollectionModel<UsuarioModel> usuariosModel = assembler.toCollectionModel(repository.findAll());
+        return usuariosModel;
     }
 
     @GetMapping("/{id}")
-    public UsuarioDTO buscar(@PathVariable Long id) {
-        return  assembler.toDTO(usuarioService.buscar(id));
+    public UsuarioModel buscar(@PathVariable Long id) {
+        return  assembler.toModel(usuarioService.buscar(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UsuarioDTO adicionar(@RequestBody @Valid UsuarioInputComSenha usuario) {
-        return assembler.toDTO(usuarioService.salvar(disassembler.toDomainObject(usuario)));
+    public UsuarioModel adicionar(@RequestBody @Valid UsuarioInputComSenha usuario) {
+        return assembler.toModel(usuarioService.salvar(disassembler.toDomainObject(usuario)));
     }
 
     @PutMapping("/{id}")
-    public UsuarioDTO atualizar(@PathVariable Long id, @RequestBody @Valid UsuarioInput input) {
+    public UsuarioModel atualizar(@PathVariable Long id, @RequestBody @Valid UsuarioInput input) {
 
         Usuario usuarioExistente = usuarioService.buscar(id);
         disassembler.copyToDomainInObject(input, usuarioExistente);
-        return assembler.toDTO(usuarioService.salvar(usuarioExistente));
+        return assembler.toModel(usuarioService.salvar(usuarioExistente));
     }
 
     @PutMapping("/{id}/senha")

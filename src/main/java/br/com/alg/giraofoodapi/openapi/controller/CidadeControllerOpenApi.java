@@ -5,6 +5,7 @@ import br.com.alg.giraofoodapi.api.model.dto.CidadeDTO;
 import br.com.alg.giraofoodapi.api.model.input.CidadeInput;
 import br.com.alg.giraofoodapi.domain.model.Cidade;
 import io.swagger.annotations.*;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -15,7 +16,7 @@ import java.util.List;
 public interface CidadeControllerOpenApi {
 
     @ApiOperation(value = "Lista das cidades")
-    public List<CidadeDTO> listar();
+    public CollectionModel<CidadeDTO> listar();
 
     @ApiOperation(value = "Busca uma cidade por ID")
     @ApiResponses({
