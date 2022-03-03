@@ -1,17 +1,18 @@
 package br.com.alg.giraofoodapi.api.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.List;
 
 //@JsonFilter("pedidoFilter")
+@Relation(collectionRelation = "pedidos")
 @Getter
 @Setter
-public class PedidoResumoDTO {
+public class PedidoResumoModel extends RepresentationModel<PedidoResumoModel> {
 
     private String codigo;
     private BigDecimal subtotal;
@@ -22,7 +23,7 @@ public class PedidoResumoDTO {
     private OffsetDateTime dataCriacao;
 
     private RestauranteResumoDTO restaurante;
-    //private UsuarioDTO cliente;
+    private UsuarioModel cliente;
 
     private String nomeCliente;
 }

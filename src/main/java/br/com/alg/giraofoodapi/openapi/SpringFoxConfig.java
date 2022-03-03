@@ -1,8 +1,8 @@
 package br.com.alg.giraofoodapi.openapi;
 
 import br.com.alg.giraofoodapi.api.exceptionhandler.Problem;
-import br.com.alg.giraofoodapi.api.model.dto.CozinhaDTO;
-import br.com.alg.giraofoodapi.api.model.dto.PedidoDTO;
+import br.com.alg.giraofoodapi.api.model.dto.CozinhaModel;
+import br.com.alg.giraofoodapi.api.model.dto.PedidoModel;
 import br.com.alg.giraofoodapi.openapi.model.CozinhasModelOpenApi;
 import br.com.alg.giraofoodapi.openapi.model.PageableModelOpenApi;
 import br.com.alg.giraofoodapi.openapi.model.PedidoModelOpenApi;
@@ -20,10 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.context.request.ServletWebRequest;
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 import springfox.documentation.builders.*;
-import springfox.documentation.schema.AlternateTypeRule;
 import springfox.documentation.schema.AlternateTypeRules;
-import springfox.documentation.schema.ModelSpecification;
-import springfox.documentation.schema.ScalarType;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.json.JacksonModuleRegistrar;
@@ -70,11 +67,11 @@ public class SpringFoxConfig  {
                         URLStreamHandler.class, Resource.class, File.class, InputStream.class)
                 .directModelSubstitute(Pageable.class, PageableModelOpenApi.class)
                 .alternateTypeRules(AlternateTypeRules.newRule(
-                        typeResolver.resolve(Page.class, CozinhaDTO.class),
+                        typeResolver.resolve(Page.class, CozinhaModel.class),
                         CozinhasModelOpenApi.class
                 ))
                 .alternateTypeRules(AlternateTypeRules.newRule(
-                        typeResolver.resolve(Page.class, PedidoDTO.class),
+                        typeResolver.resolve(Page.class, PedidoModel.class),
                         PedidoModelOpenApi.class
                 ))
                 .apiInfo(apiInfo())

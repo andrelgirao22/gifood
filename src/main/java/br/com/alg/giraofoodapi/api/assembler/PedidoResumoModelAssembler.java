@@ -1,28 +1,43 @@
 package br.com.alg.giraofoodapi.api.assembler;
 
-import br.com.alg.giraofoodapi.api.model.dto.PedidoDTO;
-import br.com.alg.giraofoodapi.api.model.dto.PedidoResumoDTO;
+import br.com.alg.giraofoodapi.api.controller.PedidoController;
+import br.com.alg.giraofoodapi.api.controller.RestauranteController;
+import br.com.alg.giraofoodapi.api.controller.UsuarioController;
+import br.com.alg.giraofoodapi.api.model.dto.PedidoResumoModel;
 import br.com.alg.giraofoodapi.domain.model.Pedido;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
-public class PedidoResumoModelAssembler {
+public class PedidoResumoModelAssembler extends RepresentationModelAssemblerSupport<Pedido, PedidoResumoModel> {
 
     @Autowired
     private ModelMapper modelMapper;
 
-    public PedidoResumoDTO toDTO(Pedido pedido) {
-        return modelMapper.map(pedido, PedidoResumoDTO.class);
+    public PedidoResumoModelAssembler() {
+        super(PedidoController.class, PedidoResumoModel.class);
     }
 
-    public List<PedidoResumoDTO> toCollection(Collection<Pedido> pedidos) {
-        return pedidos.stream().map(this::toDTO).collect(Collectors.toList());
+    @Override
+    public PedidoResumoModel toModel(Pedido pedido) {
+
+        PedidoResumoModel pedidoResumoModel = createModelWithId(pedido.getId(), pedido);
+        modelMapper.map(pedido, pedidoResumoModel);
+
+        pedidoResumoModel.add(linkTo(PedidoController.class).withRel("pedidos"));
+
+        pedidoResumoModel.getRestaurante().add(linkTo(methodOn(RestauranteController.class)
+                .buscar(pedido.getRestaurante().getId())).withSelfRel());
+
+        pedidoResumoModel.getCliente().add(linkTo(methodOn(UsuarioController.class)
+                .buscar(pedido.getCliente().getId())).withSelfRel());
+
+        return pedidoResumoModel;
     }
+
 
 }

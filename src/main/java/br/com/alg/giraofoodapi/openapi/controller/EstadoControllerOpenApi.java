@@ -1,9 +1,10 @@
 package br.com.alg.giraofoodapi.openapi.controller;
 
 import br.com.alg.giraofoodapi.api.exceptionhandler.Problem;
-import br.com.alg.giraofoodapi.api.model.dto.EstadoDTO;
+import br.com.alg.giraofoodapi.api.model.dto.EstadoModel;
 import br.com.alg.giraofoodapi.api.model.input.EstadoInput;
 import io.swagger.annotations.*;
+import org.springframework.hateoas.CollectionModel;
 
 import java.util.List;
 
@@ -11,14 +12,14 @@ import java.util.List;
 public interface EstadoControllerOpenApi {
 
     @ApiOperation("Lista os estados")
-    List<EstadoDTO> listar();
+    CollectionModel<EstadoModel> listar();
 
     @ApiOperation("Busca um estado por ID")
     @ApiResponses({
             @ApiResponse(code = 400, message = "ID do estado inválido", response = Problem.class),
             @ApiResponse(code = 404, message = "Estado não encontrado", response = Problem.class)
     })
-    EstadoDTO buscar(
+    EstadoModel buscar(
             @ApiParam(value = "ID de um estado", example = "1", required = true)
                     Long estadoId);
 
@@ -26,7 +27,7 @@ public interface EstadoControllerOpenApi {
     @ApiResponses({
             @ApiResponse(code = 201, message = "Estado cadastrado"),
     })
-    EstadoDTO adicionar(
+    EstadoModel adicionar(
             @ApiParam(name = "corpo", value = "Representação de um novo estado", required = true)
                     EstadoInput estadoInput);
 
@@ -35,7 +36,7 @@ public interface EstadoControllerOpenApi {
             @ApiResponse(code = 200, message = "Estado atualizado"),
             @ApiResponse(code = 404, message = "Estado não encontrado", response = Problem.class)
     })
-    EstadoDTO atualizar(
+    EstadoModel atualizar(
             @ApiParam(value = "ID de um estado", example = "1", required = true)
                     Long estadoId,
 

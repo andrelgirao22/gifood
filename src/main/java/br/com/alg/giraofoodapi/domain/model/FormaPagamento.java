@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.sf.jasperreports.engine.export.draw.Offset;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.hateoas.server.core.Relation;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;

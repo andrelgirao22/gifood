@@ -2,11 +2,12 @@ package br.com.alg.giraofoodapi.api.controller;
 
 import br.com.alg.giraofoodapi.api.assembler.FormaPagamentoModelAssembler;
 import br.com.alg.giraofoodapi.api.assembler.RestauranteInputDisassembler;
-import br.com.alg.giraofoodapi.api.model.dto.FormaPagamentoDTO;
+import br.com.alg.giraofoodapi.api.model.dto.FormaPagamentoModel;
 import br.com.alg.giraofoodapi.domain.model.Restaurante;
 import br.com.alg.giraofoodapi.domain.service.CadastrosRestauranteService;
 import br.com.alg.giraofoodapi.openapi.controller.RestauranteFormaPagamentoControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,9 +27,9 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
     private RestauranteInputDisassembler restauranteInputDisassembler;
 
     @GetMapping
-    public List<FormaPagamentoDTO> listar(@PathVariable Long id) {
+    public CollectionModel<FormaPagamentoModel> listar(@PathVariable Long id) {
         Restaurante restaurante = restauranteService.buscar(id);
-        return assembler.toCollectionDTO(restaurante.getFormasPagamento());
+        return assembler.toCollectionModel(restaurante.getFormasPagamento());
     }
 
     @PutMapping("/{formaPagamentoId}")

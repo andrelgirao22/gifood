@@ -1,6 +1,5 @@
 package br.com.alg.giraofoodapi.api.model.dto;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +16,6 @@ public class CidadeDTO extends RepresentationModel<CidadeDTO> {
 
     @ApiModelProperty(example = "Uberlândia")
     private String nome;
-    private EstadoDTO estado;
+    private EstadoModel estado;
 
 }

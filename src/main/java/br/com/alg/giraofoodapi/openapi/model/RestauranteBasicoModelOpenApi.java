@@ -1,6 +1,6 @@
 package br.com.alg.giraofoodapi.openapi.model;
 
-import br.com.alg.giraofoodapi.api.model.dto.CozinhaDTO;
+import br.com.alg.giraofoodapi.api.model.dto.CozinhaModel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -22,5 +22,5 @@ public class RestauranteBasicoModelOpenApi {
     @ApiModelProperty(example = "12.00")
     private BigDecimal taxaFrete;
 
-    private CozinhaDTO cozinha;
+    private CozinhaModel cozinha;
 }

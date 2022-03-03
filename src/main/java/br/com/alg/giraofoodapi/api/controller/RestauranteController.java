@@ -2,7 +2,7 @@ package br.com.alg.giraofoodapi.api.controller;
 
 import br.com.alg.giraofoodapi.api.assembler.RestauranteInputDisassembler;
 import br.com.alg.giraofoodapi.api.assembler.RestauranteModelAssembler;
-import br.com.alg.giraofoodapi.api.model.dto.RestauranteDTO;
+import br.com.alg.giraofoodapi.api.model.dto.RestauranteModel;
 import br.com.alg.giraofoodapi.api.model.input.RestauranteInput;
 import br.com.alg.giraofoodapi.api.model.view.RestauranteView;
 import br.com.alg.giraofoodapi.core.validation.ValidacaoException;
@@ -14,15 +14,13 @@ import br.com.alg.giraofoodapi.domain.model.Restaurante;
 import br.com.alg.giraofoodapi.domain.repository.RestauranteRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastrosRestauranteService;
 import br.com.alg.giraofoodapi.openapi.controller.RestauranteControllerOpenApi;
-import br.com.alg.giraofoodapi.openapi.model.RestauranteBasicoModelOpenApi;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -60,16 +58,16 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 
     @JsonView(RestauranteView.Resumo.class)
     @GetMapping
-    public List<RestauranteDTO> listarResumo() {
-        return modelAssembler.toCollectionDTO(repository.findAll());
+    public CollectionModel<RestauranteModel> listarResumo() {
+        return modelAssembler.toCollectionModel(repository.findAll());
     }
 
 
     @ApiOperation(value = "Lista restaurantes", hidden = true)
     @JsonView(RestauranteView.ApenasNome.class)
     @GetMapping(params = "projecao=apenas-nome")
-    public List<RestauranteDTO> listarApenasNome() {
-        return modelAssembler.toCollectionDTO(repository.findAll());
+    public CollectionModel<RestauranteModel> listarApenasNome() {
+        return modelAssembler.toCollectionModel(repository.findAll());
     }
 /*
     @GetMapping
@@ -89,19 +87,19 @@ public class RestauranteController implements RestauranteControllerOpenApi {
     }*/
 
     @GetMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public RestauranteDTO buscar(@PathVariable Long id) {
+    public RestauranteModel buscar(@PathVariable Long id) {
         Restaurante restaurante = this.repository.findById(id).orElseThrow(()->
                 new RestauranteNaoEncontradoException(id));
 
-        RestauranteDTO restauranteDTO = modelAssembler.toDTO(restaurante);
+        RestauranteModel restauranteDTO = modelAssembler.toModel(restaurante);
         return restauranteDTO;
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public RestauranteDTO adicionar(@RequestBody @Valid RestauranteInput restaurante) {
+    public RestauranteModel adicionar(@RequestBody @Valid RestauranteInput restaurante) {
         try {
-            return modelAssembler.toDTO(restauranteService.salvar(restauranteInputDisassembler.toDomainObject(restaurante)));
+            return modelAssembler.toModel(restauranteService.salvar(restauranteInputDisassembler.toDomainObject(restaurante)));
         } catch (CidadeNaoEncontradaException | CozinhaNaoEncontradaException  e) {
             throw new NegocioException(e.getMessage());
         }
@@ -109,8 +107,8 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public RestauranteDTO atualizar(@PathVariable Long id,
-                                     @RequestBody @Valid RestauranteInput restauranteInput) {
+    public RestauranteModel atualizar(@PathVariable Long id,
+                                      @RequestBody @Valid RestauranteInput restauranteInput) {
         Restaurante restauranteAtual = restauranteService.buscar(id);
 
         restauranteInputDisassembler.copyToDomainInObject(restauranteInput, restauranteAtual);
@@ -118,7 +116,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
         //BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "formasPagamento", "endereco", "dataCadastro");
 
         try {
-            return modelAssembler.toDTO(restauranteService.salvar(restauranteAtual));
+            return modelAssembler.toModel(restauranteService.salvar(restauranteAtual));
         } catch (CozinhaNaoEncontradaException | CidadeNaoEncontradaException e) {
             throw new NegocioException(e.getMessage(), e);
         }

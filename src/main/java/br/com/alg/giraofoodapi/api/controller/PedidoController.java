@@ -3,8 +3,8 @@ package br.com.alg.giraofoodapi.api.controller;
 import br.com.alg.giraofoodapi.api.assembler.PedidoInputDisassembler;
 import br.com.alg.giraofoodapi.api.assembler.PedidoModelAssembler;
 import br.com.alg.giraofoodapi.api.assembler.PedidoResumoModelAssembler;
-import br.com.alg.giraofoodapi.api.model.dto.PedidoDTO;
-import br.com.alg.giraofoodapi.api.model.dto.PedidoResumoDTO;
+import br.com.alg.giraofoodapi.api.model.dto.PedidoModel;
+import br.com.alg.giraofoodapi.api.model.dto.PedidoResumoModel;
 import br.com.alg.giraofoodapi.api.model.input.PedidoInput;
 import br.com.alg.giraofoodapi.core.data.PageableTranslator;
 import br.com.alg.giraofoodapi.domain.exception.EntidadeNaoEncontradaException;
@@ -17,13 +17,14 @@ import br.com.alg.giraofoodapi.domain.service.EmissaoPedidoService;
 import br.com.alg.giraofoodapi.infrastructure.repository.spec.PedidoSpec;
 import br.com.alg.giraofoodapi.openapi.controller.PedidoControllerOpenApi;
 import com.google.common.collect.ImmutableMap;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -50,14 +51,17 @@ public class PedidoController implements PedidoControllerOpenApi {
     @Autowired
     private PedidoInputDisassembler disassembler;
 
-    @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Page<PedidoResumoDTO> pesquisar(PedidoFilter filtro, @PageableDefault(size = 10) Pageable pageable) {
+    @Autowired
+    private PagedResourcesAssembler<Pedido> pagedResourcesAssembler;
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public PagedModel<PedidoResumoModel> pesquisar(PedidoFilter filtro, @PageableDefault(size = 10) Pageable pageable) {
 
         pageable = traduzirPageable(pageable);
 
         Page<Pedido> pedidoPage = repository.findAll(PedidoSpec.usandoFiltro(filtro), pageable);
-        List<PedidoResumoDTO> pedidosDto = assembler.toCollection(pedidoPage.getContent());
-        Page<PedidoResumoDTO> page = new PageImpl(pedidosDto, pageable, pedidoPage.getTotalElements());
+        CollectionModel<PedidoResumoModel> pedidosDto = assembler.toCollectionModel(pedidoPage.getContent());
+        PagedModel<PedidoResumoModel> page = pagedResourcesAssembler.toModel(pedidoPage, assembler);
         return page;
     }
 
@@ -77,14 +81,14 @@ public class PedidoController implements PedidoControllerOpenApi {
 //        return mappingJacksonValue;
 //    }
 
-    @GetMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public PedidoDTO buscar(@PathVariable String id) {
-        return pedidoModelAssembler.toDTO(pedidoService.buscar(id));
+    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public PedidoModel buscar(@PathVariable String id) {
+        return pedidoModelAssembler.toModel(pedidoService.buscar(id));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public PedidoDTO adicionar(@Valid @RequestBody PedidoInput pedidoInput) {
+    public PedidoModel adicionar(@Valid @RequestBody PedidoInput pedidoInput) {
         try {
             Pedido novoPedido = disassembler.toDomainObject(pedidoInput);
 
@@ -94,7 +98,7 @@ public class PedidoController implements PedidoControllerOpenApi {
 
             novoPedido = pedidoService.emitir(novoPedido);
 
-            return pedidoModelAssembler.toDTO(novoPedido);
+            return pedidoModelAssembler.toModel(novoPedido);
         } catch (EntidadeNaoEncontradaException e) {
             throw new NegocioException(e.getMessage(), e);
         }

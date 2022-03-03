@@ -2,13 +2,14 @@ package br.com.alg.giraofoodapi.api.controller;
 
 import br.com.alg.giraofoodapi.api.assembler.FormaPagamentoInputDisassembler;
 import br.com.alg.giraofoodapi.api.assembler.FormaPagamentoModelAssembler;
-import br.com.alg.giraofoodapi.api.model.dto.FormaPagamentoDTO;
+import br.com.alg.giraofoodapi.api.model.dto.FormaPagamentoModel;
 import br.com.alg.giraofoodapi.api.model.input.FormaPagamentoInput;
 import br.com.alg.giraofoodapi.domain.model.FormaPagamento;
 import br.com.alg.giraofoodapi.domain.repository.FormaPagamentoRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastroFormaPagamentoService;
 import br.com.alg.giraofoodapi.openapi.controller.FormasPagamentoControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,7 +40,7 @@ public class FormaPagamentoController implements FormasPagamentoControllerOpenAp
     private FormaPagamentoInputDisassembler disassembler;
 
     @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<FormaPagamentoDTO>> listar(ServletWebRequest request) {
+    public ResponseEntity<CollectionModel<FormaPagamentoModel>> listar(ServletWebRequest request) {
 
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
 
@@ -56,7 +57,7 @@ public class FormaPagamentoController implements FormasPagamentoControllerOpenAp
             return null;
         }
 
-        List<FormaPagamentoDTO> formasPagamentoDto = assembler.toCollectionDTO(service.lista());
+        CollectionModel<FormaPagamentoModel> formasPagamentoDto = assembler.toCollectionModel(service.lista());
 
         return ResponseEntity.ok()
                 //.cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePrivate())
@@ -68,7 +69,7 @@ public class FormaPagamentoController implements FormasPagamentoControllerOpenAp
     }
 
     @GetMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<FormaPagamentoDTO> buscar(ServletWebRequest request, @PathVariable Long id) {
+    public ResponseEntity<FormaPagamentoModel> buscar(ServletWebRequest request, @PathVariable Long id) {
 
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
 
@@ -85,7 +86,7 @@ public class FormaPagamentoController implements FormasPagamentoControllerOpenAp
             return null;
         }
 
-        FormaPagamentoDTO formaPagamento = assembler.toDTO(service.buscar(id));
+        FormaPagamentoModel formaPagamento = assembler.toModel(service.buscar(id));
         return ResponseEntity
                 .ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
@@ -94,15 +95,15 @@ public class FormaPagamentoController implements FormasPagamentoControllerOpenAp
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public FormaPagamentoDTO salvar(@RequestBody @Valid FormaPagamentoInput formaPagamentoInput) {
-        return assembler.toDTO(service.salvar(disassembler.toDomainObject(formaPagamentoInput)));
+    public FormaPagamentoModel salvar(@RequestBody @Valid FormaPagamentoInput formaPagamentoInput) {
+        return assembler.toModel(service.salvar(disassembler.toDomainObject(formaPagamentoInput)));
     }
 
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public FormaPagamentoDTO alterar(@RequestBody FormaPagamentoInput formaPagamentoInput, @PathVariable Long id) {
+    public FormaPagamentoModel alterar(@RequestBody FormaPagamentoInput formaPagamentoInput, @PathVariable Long id) {
         FormaPagamento formaPagamentoExistente = service.buscar(id);
         disassembler.copyToDomainInObject(formaPagamentoInput, formaPagamentoExistente);
-        return assembler.toDTO(service.salvar(formaPagamentoExistente));
+        return assembler.toModel(service.salvar(formaPagamentoExistente));
     }
 
     @DeleteMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)

@@ -1,16 +1,15 @@
 package br.com.alg.giraofoodapi.api.assembler;
 
+import br.com.alg.giraofoodapi.api.controller.RestauranteController;
+import br.com.alg.giraofoodapi.api.model.dto.RestauranteModel;
 import br.com.alg.giraofoodapi.domain.model.Restaurante;
-import br.com.alg.giraofoodapi.api.model.dto.RestauranteDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Component
-public class RestauranteModelAssembler {
+public class RestauranteModelAssembler extends RepresentationModelAssemblerSupport<Restaurante, RestauranteModel> {
 
     @Autowired
     private ModelMapper modelMapper;
@@ -18,12 +17,14 @@ public class RestauranteModelAssembler {
     @Autowired
     private RestauranteModelAssembler assembler;
 
-
-    public RestauranteDTO toDTO(Restaurante restaurante) {
-        return modelMapper.map(restaurante, RestauranteDTO.class);
+    public RestauranteModelAssembler() {
+        super(RestauranteController.class, RestauranteModel.class);
     }
 
-    public List<RestauranteDTO> toCollectionDTO(List<Restaurante> restaurantes) {
-        return restaurantes.stream().map(restaurante -> assembler.toDTO(restaurante)).collect(Collectors.toList());
+    @Override
+    public RestauranteModel toModel(Restaurante restaurante) {
+        RestauranteModel restauranteModel = createModelWithId(restaurante.getId(), restaurante);
+        modelMapper.map(restaurante, restauranteModel);
+        return restauranteModel;
     }
 }

@@ -1,18 +1,14 @@
 package br.com.alg.giraofoodapi.openapi.controller;
 
 import br.com.alg.giraofoodapi.api.exceptionhandler.Problem;
-import br.com.alg.giraofoodapi.api.model.dto.PedidoDTO;
-import br.com.alg.giraofoodapi.api.model.dto.PedidoResumoDTO;
+import br.com.alg.giraofoodapi.api.model.dto.PedidoModel;
+import br.com.alg.giraofoodapi.api.model.dto.PedidoResumoModel;
 import br.com.alg.giraofoodapi.api.model.input.PedidoInput;
 import br.com.alg.giraofoodapi.domain.repository.filter.PedidoFilter;
 import io.swagger.annotations.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import javax.validation.Valid;
+import org.springframework.hateoas.PagedModel;
 
 @Api(tags = "Pedidos")
 public interface PedidoControllerOpenApi {
@@ -22,7 +18,7 @@ public interface PedidoControllerOpenApi {
             @ApiImplicitParam(value = "Nomes das propriedades para filtrar na resposta, separados por vírgula",
                     name = "campos", paramType = "query", type = "string")
     })
-    public Page<PedidoResumoDTO> pesquisar(PedidoFilter filtro, Pageable pageable);
+    public PagedModel<PedidoResumoModel> pesquisar(PedidoFilter filtro, Pageable pageable);
 
     @ApiImplicitParams({
             @ApiImplicitParam(value = "Nomes das propriedades para filtrar na resposta, separados por vírgula",
@@ -32,13 +28,13 @@ public interface PedidoControllerOpenApi {
     @ApiResponses({
             @ApiResponse(code = 404, message = "Pedido não encontrado", response = Problem.class)
     })
-    public PedidoDTO buscar(@ApiParam(value = "Código de um pedido", example = "f9981ca4-5a5e-4da3-af04-933861df3e55") String id);
+    public PedidoModel buscar(@ApiParam(value = "Código de um pedido", example = "f9981ca4-5a5e-4da3-af04-933861df3e55") String id);
 
     @ApiOperation(value = "Registra um pedido")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Pedido registrado")
     })
-    public PedidoDTO adicionar(@ApiParam(name = "corpo", value = "Representação de um novo pedido")
+    public PedidoModel adicionar(@ApiParam(name = "corpo", value = "Representação de um novo pedido")
                                    PedidoInput pedidoInput);
 
 }

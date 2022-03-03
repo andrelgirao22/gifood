@@ -8,6 +8,7 @@ import br.com.alg.giraofoodapi.domain.service.CadastrosRestauranteService;
 import br.com.alg.giraofoodapi.openapi.controller.RestauranteUsuarioResponsavelControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,11 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
     @GetMapping
     public CollectionModel<UsuarioModel> listar(@PathVariable Long id) {
         Restaurante restaurante = restauranteService.buscar(id);
-        return assembler.toCollectionModel(restaurante.getUsuarios());
+        return assembler.toCollectionModel(restaurante.getUsuarios())
+                .removeLinks()
+                .add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
+                        .methodOn(RestauranteUsuarioResponsavelController.class)
+                        .listar(id)).withSelfRel());
     }
 
     @DeleteMapping("/{usuarioId}")

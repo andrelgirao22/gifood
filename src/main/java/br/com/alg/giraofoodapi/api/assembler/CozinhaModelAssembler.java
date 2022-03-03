@@ -1,16 +1,19 @@
 package br.com.alg.giraofoodapi.api.assembler;
 
+import br.com.alg.giraofoodapi.api.controller.CozinhaController;
 import br.com.alg.giraofoodapi.domain.model.Cozinha;
-import br.com.alg.giraofoodapi.api.model.dto.CozinhaDTO;
+import br.com.alg.giraofoodapi.api.model.dto.CozinhaModel;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class CozinhaModelAssembler {
+public class CozinhaModelAssembler extends RepresentationModelAssemblerSupport<Cozinha, CozinhaModel> {
 
     @Autowired
     private ModelMapper modelMapper;
@@ -18,12 +21,19 @@ public class CozinhaModelAssembler {
     @Autowired
     private CozinhaModelAssembler assembler;
 
-
-    public CozinhaDTO toDTO(Cozinha cozinha) {
-        return modelMapper.map(cozinha, CozinhaDTO.class);
+    public CozinhaModelAssembler() {
+        super(CozinhaController.class, CozinhaModel.class);
     }
 
-    public List<CozinhaDTO> toCollectionDTO(List<Cozinha> cozinhas) {
-        return cozinhas.stream().map(cozinha -> assembler.toDTO(cozinha)).collect(Collectors.toList());
+    @Override
+    public CozinhaModel toModel(Cozinha cozinha) {
+
+        CozinhaModel cozinhaModel = createModelWithId(cozinha.getId(), cozinha);
+        modelMapper.map(cozinha, cozinhaModel);
+
+        cozinhaModel.add(WebMvcLinkBuilder.linkTo(CozinhaController.class).withRel("cozinhas"));
+
+        return cozinhaModel;
     }
+
 }

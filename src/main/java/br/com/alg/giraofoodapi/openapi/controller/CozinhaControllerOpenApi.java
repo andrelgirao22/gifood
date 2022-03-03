@@ -1,13 +1,14 @@
 package br.com.alg.giraofoodapi.openapi.controller;
 
 import br.com.alg.giraofoodapi.api.exceptionhandler.Problem;
-import br.com.alg.giraofoodapi.api.model.dto.CozinhaDTO;
+import br.com.alg.giraofoodapi.api.model.dto.CozinhaModel;
 import br.com.alg.giraofoodapi.api.model.input.CozinhaInput;
 import br.com.alg.giraofoodapi.domain.model.Cozinha;
 import io.swagger.annotations.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -18,7 +19,7 @@ public interface CozinhaControllerOpenApi {
 
 
     @ApiOperation(value = "Lista de cozinhas")
-    public Page<CozinhaDTO> listar(@PageableDefault(size = 10) Pageable pageable);
+    public PagedModel<CozinhaModel> listar(@PageableDefault(size = 10) Pageable pageable);
 
 
     @ApiOperation(value = "Busca uma cozinha por ID")
@@ -26,13 +27,13 @@ public interface CozinhaControllerOpenApi {
             @ApiResponse(code = 400, message = "Id da cozinha inválida", response = Problem.class),
             @ApiResponse(code = 404, message = "cozinha não encontrada", response = Problem.class)
     })
-    public CozinhaDTO buscar(@ApiParam(example = "1", value = "ID da cozinha") @PathVariable Long id);
+    public CozinhaModel buscar(@ApiParam(example = "1", value = "ID da cozinha") @PathVariable Long id);
 
     @ApiOperation(value = "Cria uma nova cozinha")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Cozinha criada")
     })
-    public CozinhaDTO salvar(@ApiParam(name = "Corpo", value = "Representação de uma nova cozinha")
+    public CozinhaModel salvar(@ApiParam(name = "Corpo", value = "Representação de uma nova cozinha")
                                  @RequestBody @Valid CozinhaInput cozinha);
 
 

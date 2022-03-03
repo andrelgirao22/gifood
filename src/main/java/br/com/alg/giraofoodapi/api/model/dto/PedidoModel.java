@@ -3,14 +3,17 @@ package br.com.alg.giraofoodapi.api.model.dto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+@Relation(collectionRelation = "pedidos")
 @Getter
 @Setter
-public class PedidoDTO {
+public class PedidoModel extends RepresentationModel<PedidoModel> {
 
     private String codigo;
 
@@ -38,10 +41,10 @@ public class PedidoDTO {
     @ApiModelProperty(example = "2019-12-02T20:34:04Z")
     private OffsetDateTime dataEntrega;
 
-    private FormaPagamentoDTO formaPagamento;
+    private FormaPagamentoModel formaPagamento;
     private RestauranteResumoDTO restaurante;
     private UsuarioModel cliente;
 
-    private List<ItemPedidoDTO> itens;
+    private List<ItemPedidoModel> itens;
     private EnderecoDTO endereco;
 }
