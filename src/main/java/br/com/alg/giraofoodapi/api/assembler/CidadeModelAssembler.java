@@ -1,5 +1,6 @@
 package br.com.alg.giraofoodapi.api.assembler;
 
+import br.com.alg.giraofoodapi.api.GiLinks;
 import br.com.alg.giraofoodapi.api.controller.CidadeController;
 import br.com.alg.giraofoodapi.api.controller.EstadoController;
 import br.com.alg.giraofoodapi.domain.model.Cidade;
@@ -26,6 +27,9 @@ public class CidadeModelAssembler extends RepresentationModelAssemblerSupport<Ci
     @Autowired
     private CidadeModelAssembler assembler;
 
+    @Autowired
+    private GiLinks giLinks;
+
     public CidadeModelAssembler() {
         super(CidadeController.class, CidadeDTO.class);
     }
@@ -33,7 +37,7 @@ public class CidadeModelAssembler extends RepresentationModelAssemblerSupport<Ci
     @Override
     public CollectionModel<CidadeDTO> toCollectionModel(Iterable<? extends Cidade> entities) {
         return super.toCollectionModel(entities)
-                .add(linkTo(CidadeController.class).withSelfRel());
+                .add(giLinks.linkToCidades());
     }
 
     @Override
@@ -41,17 +45,10 @@ public class CidadeModelAssembler extends RepresentationModelAssemblerSupport<Ci
         CidadeDTO cidadeModel = createModelWithId(cidade.getId(), cidade);
         modelMapper.map(cidade, cidadeModel);
 
-        cidadeModel.add(linkTo(methodOn(CidadeController.class).listar())
-                .withRel("cidades")
-        );
+        cidadeModel.add(giLinks.linkToCidades("cidades"));
         //cidadeDTO.add(Link.of("http://localhost:8080/cidades", IanaLinkRelations.COLLECTION));
-
-        cidadeModel.getEstado().add(linkTo(methodOn(EstadoController.class)
-                .buscar(cidadeModel.getEstado().getId()))
-                .withSelfRel());
-
-        cidadeModel.getEstado().add(linkTo(EstadoController.class)
-                .withRel("estados"));
+        cidadeModel.getEstado().add(giLinks.linkToCidade(cidadeModel.getEstado().getId()));
+        cidadeModel.getEstado().add(giLinks.linkToCidades("estados"));
 
         return cidadeModel;
     }

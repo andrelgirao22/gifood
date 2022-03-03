@@ -1,5 +1,6 @@
 package br.com.alg.giraofoodapi.api.controller;
 
+import br.com.alg.giraofoodapi.api.GiLinks;
 import br.com.alg.giraofoodapi.api.assembler.UsuarioModelAssembler;
 import br.com.alg.giraofoodapi.api.model.dto.UsuarioModel;
 import br.com.alg.giraofoodapi.domain.model.Restaurante;
@@ -27,14 +28,15 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
     @Autowired
     private CadastroUsuarioService usuarioService;
 
+    @Autowired
+    private GiLinks giLinks;
+
     @GetMapping
     public CollectionModel<UsuarioModel> listar(@PathVariable Long id) {
         Restaurante restaurante = restauranteService.buscar(id);
         return assembler.toCollectionModel(restaurante.getUsuarios())
                 .removeLinks()
-                .add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-                        .methodOn(RestauranteUsuarioResponsavelController.class)
-                        .listar(id)).withSelfRel());
+                .add(giLinks.linkToResponsaveisRestaurante(id));
     }
 
     @DeleteMapping("/{usuarioId}")

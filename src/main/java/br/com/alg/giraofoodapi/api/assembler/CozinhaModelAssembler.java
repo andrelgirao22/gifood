@@ -1,5 +1,6 @@
 package br.com.alg.giraofoodapi.api.assembler;
 
+import br.com.alg.giraofoodapi.api.GiLinks;
 import br.com.alg.giraofoodapi.api.controller.CozinhaController;
 import br.com.alg.giraofoodapi.domain.model.Cozinha;
 import br.com.alg.giraofoodapi.api.model.dto.CozinhaModel;
@@ -21,6 +22,9 @@ public class CozinhaModelAssembler extends RepresentationModelAssemblerSupport<C
     @Autowired
     private CozinhaModelAssembler assembler;
 
+    @Autowired
+    private GiLinks giLinks;
+
     public CozinhaModelAssembler() {
         super(CozinhaController.class, CozinhaModel.class);
     }
@@ -31,7 +35,7 @@ public class CozinhaModelAssembler extends RepresentationModelAssemblerSupport<C
         CozinhaModel cozinhaModel = createModelWithId(cozinha.getId(), cozinha);
         modelMapper.map(cozinha, cozinhaModel);
 
-        cozinhaModel.add(WebMvcLinkBuilder.linkTo(CozinhaController.class).withRel("cozinhas"));
+        cozinhaModel.add(giLinks.linkToCozinhas("cozinhas"));
 
         return cozinhaModel;
     }

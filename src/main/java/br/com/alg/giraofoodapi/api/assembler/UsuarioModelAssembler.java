@@ -1,5 +1,6 @@
 package br.com.alg.giraofoodapi.api.assembler;
 
+import br.com.alg.giraofoodapi.api.GiLinks;
 import br.com.alg.giraofoodapi.api.controller.UsuarioController;
 import br.com.alg.giraofoodapi.api.controller.UsuarioGrupoController;
 import br.com.alg.giraofoodapi.api.model.dto.UsuarioModel;
@@ -20,6 +21,9 @@ public class UsuarioModelAssembler extends RepresentationModelAssemblerSupport<U
     @Autowired
     private UsuarioModelAssembler assembler;
 
+    @Autowired
+    private GiLinks giLinks;
+
     public UsuarioModelAssembler() {
         super(UsuarioController.class, UsuarioModel.class);
     }
@@ -31,10 +35,8 @@ public class UsuarioModelAssembler extends RepresentationModelAssemblerSupport<U
         UsuarioModel usuarioModel = createModelWithId(usuario.getId(), usuario);
         modelMapper.map(usuario, usuarioModel);
 
-        usuarioModel.add(linkTo(UsuarioController.class).withRel("usuarios"));
-
-        usuarioModel.add(linkTo(methodOn(UsuarioGrupoController.class)
-                .listar(usuarioModel.getId())).withRel("grupos-usuario"));
+        usuarioModel.add(giLinks.linkToGruposUsuario(usuarioModel.getId(), "usuarios"));
+        usuarioModel.add(giLinks.linkToGruposUsuario(usuarioModel.getId()));
 
         return usuarioModel;
     }

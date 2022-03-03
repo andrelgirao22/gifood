@@ -6,6 +6,7 @@ import br.com.alg.giraofoodapi.api.assembler.PedidoResumoModelAssembler;
 import br.com.alg.giraofoodapi.api.model.dto.PedidoModel;
 import br.com.alg.giraofoodapi.api.model.dto.PedidoResumoModel;
 import br.com.alg.giraofoodapi.api.model.input.PedidoInput;
+import br.com.alg.giraofoodapi.core.data.PageWrapper;
 import br.com.alg.giraofoodapi.core.data.PageableTranslator;
 import br.com.alg.giraofoodapi.domain.exception.EntidadeNaoEncontradaException;
 import br.com.alg.giraofoodapi.domain.exception.NegocioException;
@@ -57,11 +58,15 @@ public class PedidoController implements PedidoControllerOpenApi {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public PagedModel<PedidoResumoModel> pesquisar(PedidoFilter filtro, @PageableDefault(size = 10) Pageable pageable) {
 
-        pageable = traduzirPageable(pageable);
+        Pageable pageableTraduzido = traduzirPageable(pageable);
 
-        Page<Pedido> pedidoPage = repository.findAll(PedidoSpec.usandoFiltro(filtro), pageable);
-        CollectionModel<PedidoResumoModel> pedidosDto = assembler.toCollectionModel(pedidoPage.getContent());
-        PagedModel<PedidoResumoModel> page = pagedResourcesAssembler.toModel(pedidoPage, assembler);
+        Page<Pedido> pedidosPage = repository.findAll(PedidoSpec.usandoFiltro(filtro), pageableTraduzido);
+
+        pedidosPage = new PageWrapper<>(pedidosPage, pageable);
+
+        CollectionModel<PedidoResumoModel> pedidosDto = assembler.toCollectionModel(pedidosPage.getContent());
+
+        PagedModel<PedidoResumoModel> page = pagedResourcesAssembler.toModel(pedidosPage, assembler);
         return page;
     }
 

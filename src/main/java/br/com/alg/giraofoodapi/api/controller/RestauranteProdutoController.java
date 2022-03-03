@@ -3,7 +3,7 @@ package br.com.alg.giraofoodapi.api.controller;
 import br.com.alg.giraofoodapi.api.assembler.ProdutoInputDisassembler;
 import br.com.alg.giraofoodapi.api.assembler.ProdutoModelAssembler;
 import br.com.alg.giraofoodapi.api.assembler.RestauranteInputDisassembler;
-import br.com.alg.giraofoodapi.api.model.dto.ProdutoDTO;
+import br.com.alg.giraofoodapi.api.model.dto.ProdutoModel;
 import br.com.alg.giraofoodapi.api.model.input.ProdutoInput;
 import br.com.alg.giraofoodapi.domain.model.Produto;
 import br.com.alg.giraofoodapi.domain.model.Restaurante;
@@ -41,7 +41,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
     private RestauranteInputDisassembler restauranteInputDisassembler;
 
     @GetMapping
-    public List<ProdutoDTO> listar(@PathVariable Long id, @RequestParam(required = false) boolean incluirInativos) {
+    public List<ProdutoModel> listar(@PathVariable Long id, @RequestParam(required = false) boolean incluirInativos) {
         Restaurante restaurante = restauranteService.buscar(id);
         List<Produto> todosProdutos = null;
         if(incluirInativos) {
@@ -54,13 +54,13 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
 
     @Override
     @GetMapping("/{produtoId}")
-    public ProdutoDTO buscar(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
-        Produto produto = produtoService.buscarPeloRestaurante(produtoId, restauranteId);
+    public ProdutoModel buscar(@PathVariable Long id, @PathVariable Long produtoId) {
+        Produto produto = produtoService.buscarPeloRestaurante(produtoId, id);
         return produtoModelAssembler.toDTO(produto);
     }
 
     @PostMapping("/{produtoID}")
-    public ProdutoDTO adicionar(@PathVariable Long id, @RequestBody @Valid ProdutoInput produtoInput) {
+    public ProdutoModel adicionar(@PathVariable Long id, @RequestBody @Valid ProdutoInput produtoInput) {
         Restaurante restaurante = restauranteService.buscar(id);
         Produto produto = produtoInputDisassembler.toDomainObject(produtoInput);
         produto.setRestaurante(restaurante);
@@ -69,7 +69,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
 
     @PutMapping("/{produtoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ProdutoDTO atualizar(@PathVariable Long id, @PathVariable Long produtoId, @RequestBody @Valid ProdutoInput produtoInput) {
+    public ProdutoModel atualizar(@PathVariable Long id, @PathVariable Long produtoId, @RequestBody @Valid ProdutoInput produtoInput) {
         Produto produtoAtual = produtoService.buscar(produtoId);
         produtoInputDisassembler.copyToDomainInObject(produtoInput, produtoAtual);
         produtoAtual = produtoService.salvar(produtoAtual);

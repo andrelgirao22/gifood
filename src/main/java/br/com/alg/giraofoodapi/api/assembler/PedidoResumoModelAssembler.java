@@ -1,5 +1,6 @@
 package br.com.alg.giraofoodapi.api.assembler;
 
+import br.com.alg.giraofoodapi.api.GiLinks;
 import br.com.alg.giraofoodapi.api.controller.PedidoController;
 import br.com.alg.giraofoodapi.api.controller.RestauranteController;
 import br.com.alg.giraofoodapi.api.controller.UsuarioController;
@@ -18,6 +19,9 @@ public class PedidoResumoModelAssembler extends RepresentationModelAssemblerSupp
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private GiLinks giLinks;
+
     public PedidoResumoModelAssembler() {
         super(PedidoController.class, PedidoResumoModel.class);
     }
@@ -28,13 +32,9 @@ public class PedidoResumoModelAssembler extends RepresentationModelAssemblerSupp
         PedidoResumoModel pedidoResumoModel = createModelWithId(pedido.getId(), pedido);
         modelMapper.map(pedido, pedidoResumoModel);
 
-        pedidoResumoModel.add(linkTo(PedidoController.class).withRel("pedidos"));
-
-        pedidoResumoModel.getRestaurante().add(linkTo(methodOn(RestauranteController.class)
-                .buscar(pedido.getRestaurante().getId())).withSelfRel());
-
-        pedidoResumoModel.getCliente().add(linkTo(methodOn(UsuarioController.class)
-                .buscar(pedido.getCliente().getId())).withSelfRel());
+        pedidoResumoModel.add(giLinks.linkToPedidos());
+        pedidoResumoModel.getRestaurante().add(giLinks.linkToRestaurante(pedido.getRestaurante().getId()));
+        pedidoResumoModel.getCliente().add(giLinks.linkToUsuario(pedido.getCliente().getId()));
 
         return pedidoResumoModel;
     }
