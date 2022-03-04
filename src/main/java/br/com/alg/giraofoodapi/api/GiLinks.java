@@ -28,6 +28,20 @@ public class GiLinks {
         return Link.of(UriTemplate.of(pedidosUrl, PAGINACAO_VARIABLES.concat(filtroVariables)),"pedidos");
     }
 
+
+
+    public Link linkToConfirmacaoPedido(String codigoPedido, String  rel) {
+        return  linkTo(methodOn(FluxoPedidoController.class).confirmar(codigoPedido)).withRel(rel);
+    }
+
+    public Link linkToCancelarPedido(String codigoPedido, String  rel) {
+        return  linkTo(methodOn(FluxoPedidoController.class).cancelar(codigoPedido)).withRel(rel);
+    }
+
+    public Link linkToEntregaPedido(String codigoPedido, String  rel) {
+        return  linkTo(methodOn(FluxoPedidoController.class).entregar(codigoPedido)).withRel(rel);
+    }
+
     public Link linkToRestaurante(Long id) {
         return linkTo(methodOn(RestauranteController.class).buscar(id)).withRel(IanaLinkRelations.SELF.value());
     }
