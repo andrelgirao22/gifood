@@ -17,12 +17,12 @@ import br.com.alg.giraofoodapi.openapi.controller.RestauranteControllerOpenApi;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
@@ -56,14 +56,12 @@ public class RestauranteController implements RestauranteControllerOpenApi {
     @Autowired
     private RestauranteInputDisassembler restauranteInputDisassembler;
 
-    @JsonView(RestauranteView.Resumo.class)
+    //@JsonView(RestauranteView.Resumo.class)
     @GetMapping
     public CollectionModel<RestauranteModel> listarResumo() {
         return modelAssembler.toCollectionModel(repository.findAll());
     }
-
-
-    @ApiOperation(value = "Lista restaurantes", hidden = true)
+    
     @JsonView(RestauranteView.ApenasNome.class)
     @GetMapping(params = "projecao=apenas-nome")
     public CollectionModel<RestauranteModel> listarApenasNome() {
@@ -86,7 +84,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
                 .body(restaurantesWrapper);
     }*/
 
-    @GetMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public RestauranteModel buscar(@PathVariable Long id) {
         Restaurante restaurante = this.repository.findById(id).orElseThrow(()->
                 new RestauranteNaoEncontradoException(id));
@@ -124,14 +122,16 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 
     @PutMapping(path = "/{id}/ativo", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void ativar(@PathVariable Long id) {
+    public ResponseEntity<Void> ativar(@PathVariable Long id) {
         restauranteService.ativar(id);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(path = "/{id}/inativar", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void inativar(@PathVariable Long id) {
+    public ResponseEntity<Void> inativar(@PathVariable Long id) {
         restauranteService.inativar(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping(path = "/ativacoes", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -139,6 +139,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
     public void ativarMultiplos(@RequestBody List<Long> ids) {
         try {
             restauranteService.ativar(ids);
+
         }catch (RestauranteNaoEncontradoException e) {
             throw new NegocioException(e.getMessage());
         }
@@ -156,14 +157,16 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 
     @PutMapping(path = "/{id}/aberto", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void abrir(@PathVariable Long id) {
+    public ResponseEntity<Void> abrir(@PathVariable Long id) {
         restauranteService.abrirRestaurante(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping(path = "/{id}/fechamento", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void fechar(@PathVariable Long id) {
+    public ResponseEntity<Void> fechar(@PathVariable Long id) {
         restauranteService.fecharRestaurante(id);
+        return ResponseEntity.noContent().build();
     }
 
     /*

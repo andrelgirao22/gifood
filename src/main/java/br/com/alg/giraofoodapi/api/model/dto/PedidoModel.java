@@ -42,7 +42,7 @@ public class PedidoModel extends RepresentationModel<PedidoModel> {
     private OffsetDateTime dataEntrega;
 
     private FormaPagamentoModel formaPagamento;
-    private RestauranteResumoDTO restaurante;
+    private RestauranteApenasNomeModel restaurante;
     private UsuarioModel cliente;
 
     private List<ItemPedidoModel> itens;

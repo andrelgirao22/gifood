@@ -16,11 +16,11 @@ import java.math.BigDecimal;
 public class RestauranteModel extends RepresentationModel<RestauranteModel> {
 
     @ApiModelProperty(example = "1")
-    @JsonView({RestauranteView.Resumo.class, RestauranteView.ApenasNome.class})
+    //@JsonView({RestauranteView.Resumo.class, RestauranteView.ApenasNome.class})
     private Long id;
 
     @ApiModelProperty(example = "Thai Gourmet")
-    @JsonView({RestauranteView.Resumo.class, RestauranteView.ApenasNome.class})
+    //@JsonView({RestauranteView.Resumo.class, RestauranteView.ApenasNome.class})
     private String nome;
 
     @ApiModelProperty(example = "10.00")

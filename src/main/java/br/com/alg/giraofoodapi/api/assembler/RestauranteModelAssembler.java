@@ -1,10 +1,12 @@
 package br.com.alg.giraofoodapi.api.assembler;
 
+import br.com.alg.giraofoodapi.api.GiLinks;
 import br.com.alg.giraofoodapi.api.controller.RestauranteController;
 import br.com.alg.giraofoodapi.api.model.dto.RestauranteModel;
 import br.com.alg.giraofoodapi.domain.model.Restaurante;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +19,9 @@ public class RestauranteModelAssembler extends RepresentationModelAssemblerSuppo
     @Autowired
     private RestauranteModelAssembler assembler;
 
+    @Autowired
+    private GiLinks giLinks;
+
     public RestauranteModelAssembler() {
         super(RestauranteController.class, RestauranteModel.class);
     }
@@ -25,6 +30,18 @@ public class RestauranteModelAssembler extends RepresentationModelAssemblerSuppo
     public RestauranteModel toModel(Restaurante restaurante) {
         RestauranteModel restauranteModel = createModelWithId(restaurante.getId(), restaurante);
         modelMapper.map(restaurante, restauranteModel);
+
+        restauranteModel.getCozinha().add(giLinks.linkToCozinha(restauranteModel.getId()));
+
+        restauranteModel.add(giLinks.linkToRestaurantes());
+        restauranteModel.add(giLinks.linkToRestaurantesFormasPagamento(restauranteModel.getId()));
+        restauranteModel.add(giLinks.linkToRestaurantesResponsaveis(restauranteModel.getId()));
+
         return restauranteModel;
+    }
+
+    @Override
+    public CollectionModel<RestauranteModel> toCollectionModel(Iterable<? extends Restaurante> entities) {
+        return super.toCollectionModel(entities).add(giLinks.linkToRestaurantes());
     }
 }

@@ -6,6 +6,7 @@ import br.com.alg.giraofoodapi.api.model.input.RestauranteInput;
 import br.com.alg.giraofoodapi.openapi.model.RestauranteBasicoModelOpenApi;
 import io.swagger.annotations.*;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public interface RestauranteControllerOpenApi {
             @ApiResponse(code = 204, message = "Restaurante ativado com sucesso"),
             @ApiResponse(code = 404, message = "Restaurante não encontrado", response = Problem.class)
     })
-    public void ativar(
+    ResponseEntity<Void> ativar(
             @ApiParam(value = "ID de um restaurante", example = "1", required = true)
                     Long restauranteId);
 
@@ -60,7 +61,7 @@ public interface RestauranteControllerOpenApi {
             @ApiResponse(code = 204, message = "Restaurante inativado com sucesso"),
             @ApiResponse(code = 404, message = "Restaurante não encontrado", response = Problem.class)
     })
-    public void inativar(
+    ResponseEntity<Void> inativar(
             @ApiParam(value = "ID de um restaurante", example = "1", required = true)
                     Long restauranteId);
 
@@ -85,7 +86,7 @@ public interface RestauranteControllerOpenApi {
             @ApiResponse(code = 204, message = "Restaurante aberto com sucesso"),
             @ApiResponse(code = 404, message = "Restaurante não encontrado", response = Problem.class)
     })
-    public void abrir(
+    ResponseEntity<Void> abrir(
             @ApiParam(value = "ID de um restaurante", example = "1", required = true)
                     Long restauranteId);
 
@@ -94,7 +95,7 @@ public interface RestauranteControllerOpenApi {
             @ApiResponse(code = 204, message = "Restaurante fechado com sucesso"),
             @ApiResponse(code = 404, message = "Restaurante não encontrado", response = Problem.class)
     })
-    public void fechar(
+    ResponseEntity<Void> fechar(
             @ApiParam(value = "ID de um restaurante", example = "1", required = true)
                     Long restauranteId);
 }

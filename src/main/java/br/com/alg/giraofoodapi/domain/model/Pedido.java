@@ -90,6 +90,18 @@ public class Pedido {
         setDataCancelamento(OffsetDateTime.now());
     }
 
+    public boolean podeSerConfirmado() {
+        return getStatus().podeAlterarPara(StatusPedido.CONFIRMADO);
+    }
+
+    public boolean podeSerCancelado() {
+        return getStatus().podeAlterarPara(StatusPedido.CANCELADO);
+    }
+
+    public boolean podeSerEntregue() {
+        return getStatus().podeAlterarPara(StatusPedido.ENTREGUE);
+    }
+
     @PrePersist
     private void geraCodigo() {
         setCodigo(UUID.randomUUID().toString());

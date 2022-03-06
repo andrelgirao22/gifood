@@ -6,6 +6,7 @@ import br.com.alg.giraofoodapi.domain.model.Estado;
 import br.com.alg.giraofoodapi.api.model.dto.EstadoModel;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import org.springframework.stereotype.Component;
@@ -41,4 +42,8 @@ public class EstadoModelAssembler extends RepresentationModelAssemblerSupport<Es
         return estadoModel;
     }
 
+    @Override
+    public CollectionModel<EstadoModel> toCollectionModel(Iterable<? extends Estado> entities) {
+        return super.toCollectionModel(entities).add(giLinks.linkToEstados());
+    }
 }

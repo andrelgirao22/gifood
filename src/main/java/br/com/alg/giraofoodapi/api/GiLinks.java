@@ -28,8 +28,6 @@ public class GiLinks {
         return Link.of(UriTemplate.of(pedidosUrl, PAGINACAO_VARIABLES.concat(filtroVariables)),"pedidos");
     }
 
-
-
     public Link linkToConfirmacaoPedido(String codigoPedido, String  rel) {
         return  linkTo(methodOn(FluxoPedidoController.class).confirmar(codigoPedido)).withRel(rel);
     }
@@ -48,6 +46,22 @@ public class GiLinks {
 
     public Link linkToRestaurante(Long id, String relation) {
         return linkTo(methodOn(RestauranteController.class).buscar(id)).withRel(relation);
+    }
+
+    public Link linkToRestaurantes() {
+        return linkTo(RestauranteController.class).withRel("restaurantes");
+    }
+
+    public Link linkToRestaurantes(String rel) {
+        return linkTo(RestauranteController.class).withRel(rel);
+    }
+
+    public Link linkToRestaurantesFormasPagamento(Long id) {
+        return linkTo(methodOn(RestauranteFormaPagamentoController.class).listar(id)).withRel("formas-pagamento");
+    }
+
+    public Link linkToRestaurantesResponsaveis(Long id) {
+        return linkTo(methodOn(RestauranteUsuarioResponsavelController.class).listar(id)).withRel("responsaveis");
     }
 
     public Link linkToUsuario(Long id) {
@@ -143,5 +157,9 @@ public class GiLinks {
 
     public Link linkToCozinhas() {
         return linkToCozinhas(IanaLinkRelations.SELF.value());
+    }
+
+    public Link linkToCozinha(Long id) {
+        return linkTo(methodOn(CozinhaController.class).buscar(id)).withSelfRel();
     }
 }
