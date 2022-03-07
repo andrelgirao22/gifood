@@ -33,7 +33,7 @@ public class PedidoModelAssembler extends RepresentationModelAssemblerSupport<Pe
         modelMapper.map(pedido, pedidoModel);
 
         pedidoModel.add(linkTo(PedidoController.class).withRel("pedidos"));
-        pedidoModel.add(giLinks.linkToPedidos());
+        pedidoModel.add(giLinks.linkToPedidos("pedidos"));
 
         if(pedido.podeSerConfirmado()) {
             pedidoModel.add(giLinks.linkToConfirmacaoPedido(pedidoModel.getCodigo(), "confirmar"));

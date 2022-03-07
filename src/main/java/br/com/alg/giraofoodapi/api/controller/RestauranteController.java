@@ -103,7 +103,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
         }
     }
 
-    @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public RestauranteModel atualizar(@PathVariable Long id,
                                       @RequestBody @Valid RestauranteInput restauranteInput) {
@@ -120,21 +120,21 @@ public class RestauranteController implements RestauranteControllerOpenApi {
         }
     }
 
-    @PutMapping(path = "/{id}/ativo", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path = "/{id}/ativo", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> ativar(@PathVariable Long id) {
         restauranteService.ativar(id);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping(path = "/{id}/inativar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(path = "/{id}/inativar", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> inativar(@PathVariable Long id) {
         restauranteService.inativar(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(path = "/ativacoes", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path = "/ativacoes", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void ativarMultiplos(@RequestBody List<Long> ids) {
         try {
@@ -145,7 +145,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
         }
     }
 
-    @DeleteMapping(path = "/inativacoes", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(path = "/inativacoes", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void inativarMultiplos(@RequestBody List<Long> ids) {
         try {
@@ -155,14 +155,14 @@ public class RestauranteController implements RestauranteControllerOpenApi {
         }
     }
 
-    @PutMapping(path = "/{id}/aberto", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path = "/{id}/aberto", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> abrir(@PathVariable Long id) {
         restauranteService.abrirRestaurante(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(path = "/{id}/fechamento", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path = "/{id}/fechamento", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> fechar(@PathVariable Long id) {
         restauranteService.fecharRestaurante(id);

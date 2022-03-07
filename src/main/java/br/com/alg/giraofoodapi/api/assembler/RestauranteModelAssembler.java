@@ -37,11 +37,27 @@ public class RestauranteModelAssembler extends RepresentationModelAssemblerSuppo
         restauranteModel.add(giLinks.linkToRestaurantesFormasPagamento(restauranteModel.getId()));
         restauranteModel.add(giLinks.linkToRestaurantesResponsaveis(restauranteModel.getId()));
 
+        if(restaurante.fechamentoPermitido()) {
+            restauranteModel.add(giLinks.linkToRestauranteFechamento(restauranteModel.getId()));
+        }
+
+        if(restaurante.aberturaPermitida()) {
+            restauranteModel.add(giLinks.linkToRestauranteAbertura(restauranteModel.getId()));
+        }
+
+        if(restaurante.inativacaoPermitida()) {
+            restauranteModel.add(giLinks.linkToRestauranteInativacao(restauranteModel.getId()));
+        }
+
+        if(restaurante.ativacaoPermitida()) {
+            restauranteModel.add(giLinks.linkToRestauranteAtivacao(restauranteModel.getId()));
+        }
+
         return restauranteModel;
     }
 
     @Override
     public CollectionModel<RestauranteModel> toCollectionModel(Iterable<? extends Restaurante> entities) {
-        return super.toCollectionModel(entities).add(giLinks.linkToRestaurantes());
+        return super.toCollectionModel(entities).add(giLinks.linkToRestaurantes("restaurantes"));
     }
 }

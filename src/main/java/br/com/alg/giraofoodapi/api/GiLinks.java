@@ -10,13 +10,17 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Component
 public class GiLinks {
 
+    private static final TemplateVariables PROJECAO_VARIABLES = new TemplateVariables(
+            new TemplateVariable("projecao", TemplateVariable.VariableType.REQUEST_PARAM)
+    );
+
     private static final TemplateVariables PAGINACAO_VARIABLES = new TemplateVariables(
             new TemplateVariable("page", TemplateVariable.VariableType.REQUEST_PARAM),
             new TemplateVariable("size", TemplateVariable.VariableType.REQUEST_PARAM),
             new TemplateVariable("sort", TemplateVariable.VariableType.REQUEST_PARAM)
     );
 
-    public Link linkToPedidos() {
+    public Link linkToPedidos(String rel) {
         TemplateVariables filtroVariables = new TemplateVariables(
                 new TemplateVariable("clienteId", TemplateVariable.VariableType.REQUEST_PARAM),
                 new TemplateVariable("restauranteId", TemplateVariable.VariableType.REQUEST_PARAM),
@@ -25,8 +29,9 @@ public class GiLinks {
         );
 
         String pedidosUrl = linkTo(PedidoController.class).toUri().toString();
-        return Link.of(UriTemplate.of(pedidosUrl, PAGINACAO_VARIABLES.concat(filtroVariables)),"pedidos");
+        return Link.of(UriTemplate.of(pedidosUrl, PAGINACAO_VARIABLES.concat(filtroVariables)),rel);
     }
+
 
     public Link linkToConfirmacaoPedido(String codigoPedido, String  rel) {
         return  linkTo(methodOn(FluxoPedidoController.class).confirmar(codigoPedido)).withRel(rel);
@@ -53,7 +58,8 @@ public class GiLinks {
     }
 
     public Link linkToRestaurantes(String rel) {
-        return linkTo(RestauranteController.class).withRel(rel);
+        String url = linkTo(RestauranteController.class).toUri().toString();
+        return Link.of(UriTemplate.of(url, PROJECAO_VARIABLES), rel);
     }
 
     public Link linkToRestaurantesFormasPagamento(Long id) {
@@ -161,5 +167,21 @@ public class GiLinks {
 
     public Link linkToCozinha(Long id) {
         return linkTo(methodOn(CozinhaController.class).buscar(id)).withSelfRel();
+    }
+
+    public Link linkToRestauranteAbertura(Long id) {
+        return linkTo(methodOn(RestauranteController.class).abrir(id)).withRel("abrir");
+    }
+
+    public Link linkToRestauranteFechamento(Long id) {
+        return linkTo(methodOn(RestauranteController.class).fechar(id)).withRel("fechar");
+    }
+
+    public Link linkToRestauranteAtivacao(Long id) {
+        return linkTo(methodOn(RestauranteController.class).ativar(id)).withRel("ativar");
+    }
+
+    public Link linkToRestauranteInativacao(Long id) {
+        return linkTo(methodOn(RestauranteController.class).inativar(id)).withRel("inativar");
     }
 }
