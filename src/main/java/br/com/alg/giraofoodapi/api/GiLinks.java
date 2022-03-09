@@ -70,6 +70,18 @@ public class GiLinks {
         return linkTo(methodOn(RestauranteUsuarioResponsavelController.class).listar(id)).withRel("responsaveis");
     }
 
+    public Link linkToRestauranteFormaPagamentoDesassociacao(
+            Long restauranteId, Long formaPagamentoId, String rel) {
+        return linkTo(methodOn(RestauranteFormaPagamentoController.class)
+                .desassociar(restauranteId, formaPagamentoId)).withRel(rel);
+    }
+
+    public Link linkToRestauranteFormaPagamentoAssociacao(
+            Long restauranteId, String rel) {
+        return linkTo(methodOn(RestauranteFormaPagamentoController.class)
+                .associar(restauranteId, null)).withRel(rel);
+    }
+
     public Link linkToUsuario(Long id) {
         return linkTo(methodOn(UsuarioController.class).buscar(id)).withSelfRel();
     }
@@ -183,5 +195,9 @@ public class GiLinks {
 
     public Link linkToRestauranteInativacao(Long id) {
         return linkTo(methodOn(RestauranteController.class).inativar(id)).withRel("inativar");
+    }
+
+    public Link linkToFormasPagamento(String rel) {
+        return linkTo(FormaPagamentoController.class).withRel(rel);
     }
 }

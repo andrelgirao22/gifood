@@ -1,10 +1,12 @@
 package br.com.alg.giraofoodapi.api.assembler;
 
+import br.com.alg.giraofoodapi.api.GiLinks;
 import br.com.alg.giraofoodapi.api.controller.FormaPagamentoController;
 import br.com.alg.giraofoodapi.domain.model.FormaPagamento;
 import br.com.alg.giraofoodapi.api.model.dto.FormaPagamentoModel;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +23,9 @@ public class FormaPagamentoModelAssembler extends RepresentationModelAssemblerSu
     @Autowired
     private FormaPagamentoModelAssembler assembler;
 
+    @Autowired
+    private GiLinks giLinks;
+
     public FormaPagamentoModelAssembler() {
         super(FormaPagamentoController.class, FormaPagamentoModel.class);
     }
@@ -29,7 +34,12 @@ public class FormaPagamentoModelAssembler extends RepresentationModelAssemblerSu
     public FormaPagamentoModel toModel(FormaPagamento formaPagamento) {
         FormaPagamentoModel formaPagamentoModel = createModelWithId(formaPagamento.getId(), formaPagamento);
         modelMapper.map(formaPagamento, formaPagamentoModel);
+        formaPagamentoModel.add(giLinks.linkToFormasPagamento("formas-pagamento"));
         return formaPagamentoModel;
     }
 
+    @Override
+    public CollectionModel<FormaPagamentoModel> toCollectionModel(Iterable<? extends FormaPagamento> entities) {
+        return super.toCollectionModel(entities).add(giLinks.linkToFormasPagamento("formas-pagamento"));
+    }
 }

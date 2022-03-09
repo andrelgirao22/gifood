@@ -1,5 +1,6 @@
 package br.com.alg.giraofoodapi.api.controller;
 
+import br.com.alg.giraofoodapi.api.GiLinks;
 import br.com.alg.giraofoodapi.api.assembler.FormaPagamentoModelAssembler;
 import br.com.alg.giraofoodapi.api.assembler.RestauranteInputDisassembler;
 import br.com.alg.giraofoodapi.api.model.dto.FormaPagamentoModel;
@@ -9,6 +10,7 @@ import br.com.alg.giraofoodapi.openapi.controller.RestauranteFormaPagamentoContr
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,24 +28,36 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
     @Autowired
     private RestauranteInputDisassembler restauranteInputDisassembler;
 
+    @Autowired
+    private GiLinks giLinks;
+
     @GetMapping
     public CollectionModel<FormaPagamentoModel> listar(@PathVariable Long id) {
         Restaurante restaurante = restauranteService.buscar(id);
-        return assembler.toCollectionModel(restaurante.getFormasPagamento());
+        CollectionModel<FormaPagamentoModel> formasPagamentoModel =
+                assembler.toCollectionModel(restaurante.getFormasPagamento())
+                .removeLinks().add(giLinks.linkToRestaurantesFormasPagamento(id))
+                .add(giLinks.linkToRestauranteFormaPagamentoAssociacao(id, "associacao"));;
+
+        formasPagamentoModel.getContent().forEach(formaPagamentoModel -> {
+            formaPagamentoModel.add(giLinks
+                    .linkToRestauranteFormaPagamentoDesassociacao(id, formaPagamentoModel.getId(), "desassociar"));
+        });
+
+        return formasPagamentoModel;
     }
 
     @PutMapping("/{formaPagamentoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void associar(@PathVariable Long id, @PathVariable Long formaPagamentoId) {
+    public ResponseEntity<Void> associar(@PathVariable Long id, @PathVariable Long formaPagamentoId) {
         restauranteService.associarFormaPagamento(id, formaPagamentoId);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{formaPagamentoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void desassociar(@PathVariable Long id, @PathVariable Long formaPagamentoId) {
+    public ResponseEntity<Void> desassociar(@PathVariable Long id, @PathVariable Long formaPagamentoId) {
         restauranteService.desassociarFormaPagamento(id, formaPagamentoId);
+        return ResponseEntity.noContent().build();
     }
-
-
 }
-

@@ -39,7 +39,7 @@ public class FormaPagamentoController implements FormasPagamentoControllerOpenAp
     @Autowired
     private FormaPagamentoInputDisassembler disassembler;
 
-    @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CollectionModel<FormaPagamentoModel>> listar(ServletWebRequest request) {
 
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
@@ -68,7 +68,7 @@ public class FormaPagamentoController implements FormasPagamentoControllerOpenAp
 
     }
 
-    @GetMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<FormaPagamentoModel> buscar(ServletWebRequest request, @PathVariable Long id) {
 
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
