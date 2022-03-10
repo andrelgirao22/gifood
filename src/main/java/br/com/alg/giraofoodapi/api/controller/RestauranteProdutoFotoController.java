@@ -1,7 +1,7 @@
 package br.com.alg.giraofoodapi.api.controller;
 
 import br.com.alg.giraofoodapi.api.assembler.FotoProdutoModelAssembler;
-import br.com.alg.giraofoodapi.api.model.dto.FotoProdutoDTO;
+import br.com.alg.giraofoodapi.api.model.dto.FotoProdutoModel;
 import br.com.alg.giraofoodapi.api.model.input.FotoProdutoInput;
 import br.com.alg.giraofoodapi.domain.exception.EntidadeNaoEncontradaException;
 import br.com.alg.giraofoodapi.domain.model.FotoProduto;
@@ -23,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 @RestController
@@ -44,11 +43,11 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public FotoProdutoDTO buscar(@PathVariable Long restauranteId,
+    public FotoProdutoModel buscar(@PathVariable Long restauranteId,
                                    @PathVariable Long produtoId) {
         FotoProduto fotoProduto = produtoService.buscar(restauranteId, produtoId);
 
-        return assembler.toDTO(fotoProduto);
+        return assembler.toModel(fotoProduto);
     }
 
     @GetMapping(produces = MediaType.ALL_VALUE)
@@ -89,10 +88,10 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
     }
 
     @PutMapping
-    public FotoProdutoDTO atualizarFoto(@PathVariable Long restauranteId,
-                                        @PathVariable Long produtoId,
-                                        @Valid FotoProdutoInput fotoProdutoInput,
-                                        @RequestPart(required = true) MultipartFile arquivo)  throws IOException {
+    public FotoProdutoModel atualizarFoto(@PathVariable Long restauranteId,
+                                          @PathVariable Long produtoId,
+                                          @Valid FotoProdutoInput fotoProdutoInput,
+                                          @RequestPart(required = true) MultipartFile arquivo)  throws IOException {
 
         Produto produto = cadastroProdutoService.buscarPeloRestaurante(restauranteId, produtoId);
 
@@ -107,7 +106,7 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
 
         fotoProduto = produtoService.salvar(fotoProduto, arquivo.getInputStream());
 
-        return assembler.toDTO(fotoProduto);
+        return assembler.toModel(fotoProduto);
     }
 
     @DeleteMapping

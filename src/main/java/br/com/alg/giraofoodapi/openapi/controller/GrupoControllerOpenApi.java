@@ -1,33 +1,33 @@
 package br.com.alg.giraofoodapi.openapi.controller;
 
 import br.com.alg.giraofoodapi.api.exceptionhandler.Problem;
-import br.com.alg.giraofoodapi.api.model.dto.GrupoDTO;
+import br.com.alg.giraofoodapi.api.model.dto.GrupoModel;
 import br.com.alg.giraofoodapi.api.model.input.GrupoInput;
 import io.swagger.annotations.*;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Api(tags = "Grupos")
 public interface GrupoControllerOpenApi {
 
     @ApiOperation(value = "Lista de grupos")
-    public List<GrupoDTO> listar();
+    public CollectionModel<GrupoModel> listar();
 
     @ApiOperation(value = "Busca um grupo por ID")
     @ApiResponses({
             @ApiResponse(code = 400, message = "ID do grupo inválido", response = Problem.class),
             @ApiResponse(code = 404, message = "Grupo não encontrado", response = Problem.class)
     })
-    public GrupoDTO buscar(@ApiParam(value = "ID do Grupo", example = "1") @PathVariable Long id);
+    public GrupoModel buscar(@ApiParam(value = "ID do Grupo", example = "1") @PathVariable Long id);
 
     @ApiOperation(value = "Cria um novo grupo")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Grupo criado")
     })
-    public GrupoDTO salvar(@ApiParam(name = "corpo",value = "Representação do grupo")
+    public GrupoModel salvar(@ApiParam(name = "corpo",value = "Representação do grupo")
                                @RequestBody @Valid GrupoInput grupo);
 
     @ApiOperation(value = "Atualiza um grupo por ID")
@@ -35,7 +35,7 @@ public interface GrupoControllerOpenApi {
             @ApiResponse(code = 200, message = "Grupo atualizado"),
             @ApiResponse(code = 404, message = "Grupo não encontrado", response = Problem.class)
     })
-    public GrupoDTO alterar(@ApiParam(name = "corpo",value = "Representação do grupo")
+    public GrupoModel alterar(@ApiParam(name = "corpo",value = "Representação do grupo")
             @RequestBody @Valid GrupoInput grupo, @PathVariable Long id);
 
     @ApiOperation(value = "Exclui um grupo")

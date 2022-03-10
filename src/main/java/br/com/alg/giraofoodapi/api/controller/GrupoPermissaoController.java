@@ -1,11 +1,8 @@
 package br.com.alg.giraofoodapi.api.controller;
 
-import br.com.alg.giraofoodapi.api.assembler.GrupoInputDisassembler;
-import br.com.alg.giraofoodapi.api.assembler.GrupoModelAssembler;
+import br.com.alg.giraofoodapi.api.GiLinks;
 import br.com.alg.giraofoodapi.api.assembler.PermissaoModelAssembler;
-import br.com.alg.giraofoodapi.api.model.dto.GrupoDTO;
-import br.com.alg.giraofoodapi.api.model.dto.PermissaoDTO;
-import br.com.alg.giraofoodapi.api.model.input.GrupoInput;
+import br.com.alg.giraofoodapi.api.model.dto.PermissaoModel;
 import br.com.alg.giraofoodapi.domain.model.Grupo;
 import br.com.alg.giraofoodapi.domain.model.Permissao;
 import br.com.alg.giraofoodapi.domain.repository.GrupoRepository;
@@ -13,10 +10,11 @@ import br.com.alg.giraofoodapi.domain.service.CadastroGrupoService;
 import br.com.alg.giraofoodapi.domain.service.CadastroPermissaoService;
 import br.com.alg.giraofoodapi.openapi.controller.GrupoPermissaoControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -35,28 +33,45 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
     @Autowired
     private PermissaoModelAssembler assembler;
 
+    @Autowired
+    private GiLinks giLinks;
+
     @GetMapping
-    public List<PermissaoDTO> listar(@PathVariable Long id) {
-        return  assembler.toCollectionDTO(grupoService.buscar(id).getPermissoes());
+    public CollectionModel<PermissaoModel> listar(@PathVariable Long grupoId) {
+        Grupo grupo = grupoService.buscar(grupoId);
+
+        CollectionModel<PermissaoModel> permissoesModel = assembler.toCollectionModel(grupo.getPermissoes())
+                .removeLinks()
+                .add(giLinks.linkToGrupoPermissoes(grupoId))
+                .add(giLinks.linkToGrupoPermissaoAssociacao(grupoId, "associar"));
+
+        permissoesModel.getContent().forEach(permissaoModel -> {
+            permissaoModel.add(giLinks.linkToGrupoPermissaoDesassociacao(
+                    grupoId, permissaoModel.getId(), "desassociar"));
+        });
+
+        return permissoesModel;
     }
 
     @GetMapping("/{permissaoId}")
-    public PermissaoDTO buscar(@PathVariable Long permissaoId) {
-        return  assembler.toDTO(permissaoService.buscar(permissaoId));
+    public PermissaoModel buscar(@PathVariable Long permissaoId) {
+        return  assembler.toModel(permissaoService.buscar(permissaoId));
     }
 
     @PutMapping("/{permisaoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void associar(@PathVariable Long id,  @PathVariable Long permisaoId) {
+    public ResponseEntity<Void> associar(@PathVariable Long id, @PathVariable Long permisaoId) {
         Grupo grupo = grupoService.buscar(id);
         Permissao permissao = permissaoService.buscar(permisaoId);
         grupoService.associarPermissao(id, permisaoId);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{permissaoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void desassociar(@PathVariable Long id, @PathVariable Long permissaoId) {
+    public ResponseEntity<Void> desassociar(@PathVariable Long id, @PathVariable Long permissaoId) {
         grupoService.desassociarPermissao(id, permissaoId);
+        return ResponseEntity.noContent().build();
     }
 
 }

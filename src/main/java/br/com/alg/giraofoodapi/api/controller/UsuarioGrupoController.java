@@ -1,15 +1,14 @@
 package br.com.alg.giraofoodapi.api.controller;
 
 import br.com.alg.giraofoodapi.api.assembler.GrupoModelAssembler;
-import br.com.alg.giraofoodapi.api.model.dto.GrupoDTO;
+import br.com.alg.giraofoodapi.api.model.dto.GrupoModel;
 import br.com.alg.giraofoodapi.domain.model.Usuario;
 import br.com.alg.giraofoodapi.domain.service.CadastroUsuarioService;
 import br.com.alg.giraofoodapi.openapi.controller.UsuarioGrupoControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/usuarios/{id}/grupos")
@@ -23,9 +22,9 @@ public class UsuarioGrupoController implements UsuarioGrupoControllerOpenApi {
     private GrupoModelAssembler assembler;
 
     @GetMapping
-    public List<GrupoDTO> listar(@PathVariable Long id) {
+    public CollectionModel<GrupoModel> listar(@PathVariable Long id) {
         Usuario usuario = usuarioService.buscar(id);
-        return assembler.toCollectionDTO(usuario.getGrupos());
+        return assembler.toCollectionModel(usuario.getGrupos());
     }
 
     @DeleteMapping("/{grupoId}")

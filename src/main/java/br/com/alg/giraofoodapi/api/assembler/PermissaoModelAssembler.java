@@ -1,9 +1,12 @@
 package br.com.alg.giraofoodapi.api.assembler;
 
-import br.com.alg.giraofoodapi.api.model.dto.PermissaoDTO;
+import br.com.alg.giraofoodapi.api.GiLinks;
+import br.com.alg.giraofoodapi.api.model.dto.PermissaoModel;
 import br.com.alg.giraofoodapi.domain.model.Permissao;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -11,20 +14,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class PermissaoModelAssembler {
+public class PermissaoModelAssembler implements RepresentationModelAssembler<Permissao, PermissaoModel> {
 
     @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
-    private PermissaoModelAssembler assembler;
+    private GiLinks giLinks;
 
-
-    public PermissaoDTO toDTO(Permissao permissao) {
-        return modelMapper.map(permissao, PermissaoDTO.class);
+    @Override
+    public PermissaoModel toModel(Permissao permissao) {
+        PermissaoModel permissaoModel = modelMapper.map(permissao, PermissaoModel.class);
+        return permissaoModel;
     }
 
-    public List<PermissaoDTO> toCollectionDTO(Collection<Permissao> permissaos) {
-        return permissaos.stream().map(permissao -> assembler.toDTO(permissao)).collect(Collectors.toList());
+    @Override
+    public CollectionModel<PermissaoModel> toCollectionModel(Iterable<? extends Permissao> entities) {
+        return RepresentationModelAssembler.super.toCollectionModel(entities)
+                .add(giLinks.linkToPermissoes());
     }
 }

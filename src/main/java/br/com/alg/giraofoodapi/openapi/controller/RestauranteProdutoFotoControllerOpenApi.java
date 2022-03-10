@@ -1,8 +1,7 @@
 package br.com.alg.giraofoodapi.openapi.controller;
 
 import br.com.alg.giraofoodapi.api.exceptionhandler.Problem;
-import br.com.alg.giraofoodapi.api.model.dto.FotoProdutoDTO;
-import br.com.alg.giraofoodapi.api.model.dto.GrupoDTO;
+import br.com.alg.giraofoodapi.api.model.dto.FotoProdutoModel;
 import br.com.alg.giraofoodapi.api.model.input.FotoProdutoInput;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +9,6 @@ import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 
 @Api(tags = "Produtos")
 public interface RestauranteProdutoFotoControllerOpenApi {
@@ -20,7 +18,7 @@ public interface RestauranteProdutoFotoControllerOpenApi {
             @ApiResponse(code = 200, message = "Foto do produto atualizada"),
             @ApiResponse(code = 404, message = "Produto de restaurante não encontrado", response = Problem.class)
     })
-    FotoProdutoDTO atualizarFoto(
+    FotoProdutoModel atualizarFoto(
             @ApiParam(value = "ID do restaurante", example = "1", required = true)
                     Long restauranteId,
 
@@ -49,7 +47,7 @@ public interface RestauranteProdutoFotoControllerOpenApi {
             @ApiResponse(code = 400, message = "ID do restaurante ou produto inválido", response = Problem.class),
             @ApiResponse(code = 404, message = "Foto de produto não encontrada", response = Problem.class)
     })
-    FotoProdutoDTO buscar(
+    FotoProdutoModel buscar(
             @ApiParam(value = "ID do restaurante", example = "1", required = true)
                     Long restauranteId,
 

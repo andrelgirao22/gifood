@@ -103,8 +103,43 @@ public class GiLinks {
                 .listar(usuarioId)).withRel(rel);
     }
 
+    public Link linkToGrupos(String rel) {
+        return linkTo(GrupoController.class).withRel(rel);
+    }
+
+    public Link linkToGrupos() {
+        return linkToGrupos(IanaLinkRelations.SELF.value());
+    }
+
+    public Link linkToGrupoPermissoes(Long grupoId, String rel) {
+        return linkTo(methodOn(GrupoPermissaoController.class)
+                .listar(grupoId)).withRel(rel);
+    }
+
     public Link linkToGruposUsuario(Long usuarioId) {
         return linkToGruposUsuario(usuarioId, IanaLinkRelations.SELF.value());
+    }
+
+    public Link linkToPermissoes(String rel) {
+        return linkTo(GrupoPermissaoController.class).withRel(rel);
+    }
+
+    public Link linkToPermissoes() {
+        return linkToPermissoes(IanaLinkRelations.SELF.value());
+    }
+
+    public Link linkToGrupoPermissoes(Long grupoId) {
+        return linkToGrupoPermissoes(grupoId, IanaLinkRelations.SELF.value());
+    }
+
+    public Link linkToGrupoPermissaoAssociacao(Long grupoId, String rel) {
+        return linkTo(methodOn(GrupoPermissaoController.class)
+                .associar(grupoId, null)).withRel(rel);
+    }
+
+    public Link linkToGrupoPermissaoDesassociacao(Long grupoId, Long permissaoId, String rel) {
+        return linkTo(methodOn(GrupoPermissaoController.class)
+                .desassociar(grupoId, permissaoId)).withRel(rel);
     }
 
     public Link linkToResponsaveisRestaurante(Long restauranteId, String rel) {
@@ -213,5 +248,14 @@ public class GiLinks {
 
     public Link linkToFormasPagamento(String rel) {
         return linkTo(FormaPagamentoController.class).withRel(rel);
+    }
+
+    public Link linkToFotoProduto(Long restauranteId, Long produtoId, String rel) {
+        return linkTo(methodOn(RestauranteProdutoFotoController.class)
+                .buscar(restauranteId, produtoId)).withRel(rel);
+    }
+
+    public Link linkToFotoProduto(Long restauranteId, Long produtoId) {
+        return linkToFotoProduto(restauranteId, produtoId, IanaLinkRelations.SELF.value());
     }
 }
