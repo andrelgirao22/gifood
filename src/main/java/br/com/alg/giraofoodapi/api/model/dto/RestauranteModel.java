@@ -35,4 +35,5 @@ public class RestauranteModel extends RepresentationModel<RestauranteModel> {
     private EnderecoDTO endereco;
 
 
+
 }

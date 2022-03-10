@@ -35,8 +35,8 @@ public class UsuarioModelAssembler extends RepresentationModelAssemblerSupport<U
         UsuarioModel usuarioModel = createModelWithId(usuario.getId(), usuario);
         modelMapper.map(usuario, usuarioModel);
 
-        usuarioModel.add(giLinks.linkToGruposUsuario(usuarioModel.getId(), "usuarios"));
-        usuarioModel.add(giLinks.linkToGruposUsuario(usuarioModel.getId()));
+        usuarioModel.add(giLinks.linkToUsuarios("usuarios"));
+        usuarioModel.add(giLinks.linkToGruposUsuario(usuarioModel.getId(), "grupos-usuarios"));
 
         return usuarioModel;
     }

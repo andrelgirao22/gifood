@@ -66,8 +66,8 @@ public class GiLinks {
         return linkTo(methodOn(RestauranteFormaPagamentoController.class).listar(id)).withRel("formas-pagamento");
     }
 
-    public Link linkToRestaurantesResponsaveis(Long id) {
-        return linkTo(methodOn(RestauranteUsuarioResponsavelController.class).listar(id)).withRel("responsaveis");
+    public Link linkToRestaurantesResponsaveis(Long id, String rel) {
+        return linkTo(methodOn(RestauranteUsuarioResponsavelController.class).listar(id)).withRel(rel);
     }
 
     public Link linkToRestauranteFormaPagamentoDesassociacao(
@@ -116,6 +116,16 @@ public class GiLinks {
         return linkToResponsaveisRestaurante(restauranteId, IanaLinkRelations.SELF.value());
     }
 
+    public Link linkToResponsaveisRestauranteDesassocicao(Long restauranteId, Long usuarioId, String rel) {
+        return linkTo(methodOn(RestauranteUsuarioResponsavelController.class)
+                .desassociar(restauranteId, usuarioId)).withRel(rel);
+    }
+
+    public Link linkToResponsaveisRestauranteAssociacao(Long restauranteId, String rel) {
+        return linkTo(methodOn(RestauranteUsuarioResponsavelController.class)
+                .associar(restauranteId, null)).withRel(rel);
+    }
+
     public Link linkToFormaPagamento(Long formaPagamentoId, String rel) {
         return linkTo(methodOn(FormaPagamentoController.class)
                 .buscar(null,formaPagamentoId)).withRel(rel);
@@ -157,6 +167,10 @@ public class GiLinks {
 
     public Link linkToEstados() {
         return linkToEstados(IanaLinkRelations.SELF.value());
+    }
+
+    public Link linkToProdutos(Long restauranteId, String rel) {
+        return linkToProdutos(restauranteId, IanaLinkRelations.SELF.value());
     }
 
     public Link linkToProduto(Long restauranteId, Long produtoId, String rel) {
