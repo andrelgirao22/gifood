@@ -121,7 +121,7 @@ public class GiLinks {
     }
 
     public Link linkToPermissoes(String rel) {
-        return linkTo(GrupoPermissaoController.class).withRel(rel);
+        return linkTo(PermissaoController.class).withRel(rel);
     }
 
     public Link linkToPermissoes() {
@@ -215,7 +215,7 @@ public class GiLinks {
     }
 
     public Link linkToProdutos(Long restauranteId, String rel) {
-        return linkToProdutos(restauranteId, IanaLinkRelations.SELF.value());
+        return linkToProduto(restauranteId, null, IanaLinkRelations.SELF.value());
     }
 
     public Link linkToProduto(Long restauranteId, Long produtoId, String rel) {
@@ -267,5 +267,24 @@ public class GiLinks {
 
     public Link linkToFotoProduto(Long restauranteId, Long produtoId) {
         return linkToFotoProduto(restauranteId, produtoId, IanaLinkRelations.SELF.value());
+    }
+
+    public Link linkToEstatisticas(String rel) {
+        return linkTo(EstatisticasController.class).withRel(rel);
+    }
+
+    public Link linkToVendasDiarias(String rel) {
+
+        TemplateVariables templateVariable= new TemplateVariables(
+                new TemplateVariable("restauranteId", TemplateVariable.VariableType.REQUEST_PARAM),
+                new TemplateVariable("dataCriacaoInicio", TemplateVariable.VariableType.REQUEST_PARAM),
+                new TemplateVariable("dataCriacaoFim", TemplateVariable.VariableType.REQUEST_PARAM),
+                new TemplateVariable("timeOffset", TemplateVariable.VariableType.REQUEST_PARAM)
+        );
+
+        String pedidosUrl = linkTo(methodOn(EstatisticasController.class)
+                .consultarVendasDiarias(null)).toUri().toString();
+
+        return Link.of(UriTemplate.of(pedidosUrl, templateVariable), rel);
     }
 }

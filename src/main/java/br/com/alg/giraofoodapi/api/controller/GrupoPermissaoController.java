@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/grupos/{id}/permissoes")
+@RequestMapping("/grupos/{grupoId}/permissoes")
 public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi {
 
     @Autowired
@@ -60,17 +60,17 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
 
     @PutMapping("/{permisaoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> associar(@PathVariable Long id, @PathVariable Long permisaoId) {
-        Grupo grupo = grupoService.buscar(id);
+    public ResponseEntity<Void> associar(@PathVariable Long grupoId, @PathVariable Long permisaoId) {
+        Grupo grupo = grupoService.buscar(grupoId);
         Permissao permissao = permissaoService.buscar(permisaoId);
-        grupoService.associarPermissao(id, permisaoId);
+        grupoService.associarPermissao(grupoId, permisaoId);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{permissaoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> desassociar(@PathVariable Long id, @PathVariable Long permissaoId) {
-        grupoService.desassociarPermissao(id, permissaoId);
+    public ResponseEntity<Void> desassociar(@PathVariable Long grupoId, @PathVariable Long permissaoId) {
+        grupoService.desassociarPermissao(grupoId, permissaoId);
         return ResponseEntity.noContent().build();
     }
 
