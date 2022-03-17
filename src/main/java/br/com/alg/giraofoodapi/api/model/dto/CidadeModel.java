@@ -9,7 +9,7 @@ import org.springframework.hateoas.server.core.Relation;
 @Relation(collectionRelation = "cidades")
 @Getter
 @Setter
-public class CidadeDTO extends RepresentationModel<CidadeDTO> {
+public class CidadeModel extends RepresentationModel<CidadeModel> {
 
     @ApiModelProperty(example = "1")
     private Long id;

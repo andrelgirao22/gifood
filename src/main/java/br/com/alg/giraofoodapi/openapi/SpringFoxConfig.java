@@ -1,11 +1,10 @@
 package br.com.alg.giraofoodapi.openapi;
 
 import br.com.alg.giraofoodapi.api.exceptionhandler.Problem;
+import br.com.alg.giraofoodapi.api.model.dto.CidadeModel;
 import br.com.alg.giraofoodapi.api.model.dto.CozinhaModel;
 import br.com.alg.giraofoodapi.api.model.dto.PedidoModel;
-import br.com.alg.giraofoodapi.openapi.model.CozinhasModelOpenApi;
-import br.com.alg.giraofoodapi.openapi.model.PageableModelOpenApi;
-import br.com.alg.giraofoodapi.openapi.model.PedidoModelOpenApi;
+import br.com.alg.giraofoodapi.openapi.model.*;
 import com.fasterxml.classmate.TypeResolver;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +13,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.Links;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,7 +22,10 @@ import org.springframework.web.context.request.ServletWebRequest;
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 import springfox.documentation.builders.*;
 import springfox.documentation.schema.AlternateTypeRules;
-import springfox.documentation.service.*;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
+import springfox.documentation.service.Response;
+import springfox.documentation.service.Tag;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.json.JacksonModuleRegistrar;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -37,7 +41,7 @@ import java.util.function.Consumer;
 
 @Configuration
 @Import(BeanValidatorPluginsConfiguration.class)
-public class SpringFoxConfig  {
+public class SpringFoxConfig {
 
     @Bean
     public Docket apiDocket() {
@@ -66,6 +70,7 @@ public class SpringFoxConfig  {
                 .ignoredParameterTypes(ServletWebRequest.class, URL.class, URI.class,
                         URLStreamHandler.class, Resource.class, File.class, InputStream.class)
                 .directModelSubstitute(Pageable.class, PageableModelOpenApi.class)
+                .directModelSubstitute(Links.class, LinksModelOpenApi.class)
                 .alternateTypeRules(AlternateTypeRules.newRule(
                         typeResolver.resolve(Page.class, CozinhaModel.class),
                         CozinhasModelOpenApi.class
@@ -73,6 +78,10 @@ public class SpringFoxConfig  {
                 .alternateTypeRules(AlternateTypeRules.newRule(
                         typeResolver.resolve(Page.class, PedidoModel.class),
                         PedidoModelOpenApi.class
+                ))
+                .alternateTypeRules(AlternateTypeRules.newRule(
+                        typeResolver.resolve(CollectionModel.class, CidadeModel.class),
+                        CidadesModelOpenApi.class
                 ))
                 .apiInfo(apiInfo())
                 .tags(new Tag("Cidades", "Gerencia as cidades"),

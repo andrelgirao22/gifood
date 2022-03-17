@@ -8,27 +8,17 @@ import br.com.alg.giraofoodapi.domain.exception.EntidadeNaoEncontradaException;
 import br.com.alg.giraofoodapi.domain.exception.EstadoNaoEncontradoException;
 import br.com.alg.giraofoodapi.domain.exception.NegocioException;
 import br.com.alg.giraofoodapi.domain.model.Cidade;
-import br.com.alg.giraofoodapi.api.model.dto.CidadeDTO;
+import br.com.alg.giraofoodapi.api.model.dto.CidadeModel;
 import br.com.alg.giraofoodapi.api.model.input.CidadeInput;
 import br.com.alg.giraofoodapi.domain.repository.CidadeRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastroCidadeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.IanaLinkRelations;
-import org.springframework.hateoas.Link;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/cidades")
@@ -47,26 +37,26 @@ public class CidadeController implements CidadeControllerOpenApi {
     private CidadeInputDisassembler disassembler;
 
     @GetMapping
-    public CollectionModel<CidadeDTO> listar() {
+    public CollectionModel<CidadeModel> listar() {
         return assembler.toCollectionModel(this.repository.findAll());
     }
 
     @GetMapping(path = "/{cidadeId}")
-    public CidadeDTO buscarPorId(@PathVariable Long cidadeId) {
+    public CidadeModel buscarPorId(@PathVariable Long cidadeId) {
         Cidade cidade = service.buscar(cidadeId);
-        CidadeDTO cidadeDTO = assembler.toModel(cidade);
+        CidadeModel cidadeDTO = assembler.toModel(cidade);
         return cidadeDTO;
 
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CidadeDTO salvar(@RequestBody @Valid CidadeInput cidadeInput) {
+    public CidadeModel salvar(@RequestBody @Valid CidadeInput cidadeInput) {
         try{
             Cidade cidade = disassembler.toDomainObject(cidadeInput);
             cidade = service.salvar(cidade);
 
-            CidadeDTO cidadeDTO = assembler.toModel(cidade);
+            CidadeModel cidadeDTO = assembler.toModel(cidade);
             ResourceUriHelper.addUriInResponseHeader(cidadeDTO.getId());
             return cidadeDTO;
         } catch (EstadoNaoEncontradoException e) {

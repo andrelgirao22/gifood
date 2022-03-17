@@ -1,16 +1,8 @@
 package br.com.alg.giraofoodapi.openapi.controller;
 
 import br.com.alg.giraofoodapi.api.exceptionhandler.Problem;
-import br.com.alg.giraofoodapi.api.model.dto.CidadeDTO;
-import br.com.alg.giraofoodapi.api.model.input.CidadeInput;
-import br.com.alg.giraofoodapi.domain.model.Cidade;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import javax.validation.Valid;
-import java.util.List;
 
 @Api(tags = "Pedidos")
 public interface FluxoPedidoControllerOpenApi {
