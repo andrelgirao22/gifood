@@ -3,6 +3,7 @@ package br.com.alg.giraofoodapi.openapi.controller;
 import br.com.alg.giraofoodapi.api.exceptionhandler.Problem;
 import br.com.alg.giraofoodapi.api.model.dto.FormaPagamentoModel;
 import br.com.alg.giraofoodapi.api.model.input.FormaPagamentoInput;
+import br.com.alg.giraofoodapi.openapi.model.FormasPagamentoModelOpenApi;
 import io.swagger.annotations.*;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import java.util.List;
 @Api(tags = "Formas Pagamento")
 public interface FormasPagamentoControllerOpenApi {
 
-    @ApiOperation(value = "Lista de formas de pagamento")
+    @ApiOperation(value = "Lista de formas de pagamento",  response = FormasPagamentoModelOpenApi.class)
     public ResponseEntity<CollectionModel<FormaPagamentoModel>> listar(ServletWebRequest request);
 
     @ApiOperation(value = "Busca uma forma de pagamento por ID")

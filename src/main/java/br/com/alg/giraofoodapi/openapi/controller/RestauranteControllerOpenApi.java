@@ -8,13 +8,14 @@ import io.swagger.annotations.*;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 
 @Api(tags = "Restaurantes")
 public interface RestauranteControllerOpenApi {
 
-    @ApiOperation(value = "Lista restaurantes", response = RestauranteBasicoModelOpenApi.class)
+    @ApiOperation(value = "Lista restaurantes")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "Nome da projeção de pedidos", allowableValues = "apenas-nome",
                     name = "projecao", paramType = "query", type = "string")
@@ -22,6 +23,7 @@ public interface RestauranteControllerOpenApi {
     public CollectionModel<RestauranteModel> listarResumo();
 
 
+    @ApiIgnore
     @ApiOperation(value = "Lista restaurantes", hidden = true)
     public CollectionModel<RestauranteModel> listarApenasNome();
 

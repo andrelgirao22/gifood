@@ -8,6 +8,6 @@ import lombok.Setter;
 @ApiModel("PedidosModel")
 @Getter
 @Setter
-public class PedidoModelOpenApi extends PagedModelOpenApi<PedidoModel> {
+public class PedidoModelOpenApi {
 
 }
