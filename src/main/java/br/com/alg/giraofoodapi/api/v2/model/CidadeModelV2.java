@@ -3,12 +3,14 @@
 package br.com.alg.giraofoodapi.api.v2.model;
 
 import br.com.alg.giraofoodapi.api.v1.model.dto.EstadoModel;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
+@ApiModel("CidadeModel")
 @Relation(collectionRelation = "cidades")
 @Getter
 @Setter

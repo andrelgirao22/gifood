@@ -1,13 +1,12 @@
-package br.com.alg.giraofoodapi.api.v1.controller;
+package br.com.alg.giraofoodapi.api.v2.controller;
 
-import br.com.alg.giraofoodapi.api.v1.assembler.CozinhaInputDisassembler;
-import br.com.alg.giraofoodapi.api.v1.assembler.CozinhaModelAssembler;
+import br.com.alg.giraofoodapi.api.v2.assembler.CozinhaInputDisassemblerV2;
+import br.com.alg.giraofoodapi.api.v2.assembler.CozinhaModelAssemblerV2;
+import br.com.alg.giraofoodapi.api.v2.model.CozinhaModelV2;
+import br.com.alg.giraofoodapi.api.v2.model.input.CozinhaInputV2;
 import br.com.alg.giraofoodapi.domain.model.Cozinha;
-import br.com.alg.giraofoodapi.api.v1.model.dto.CozinhaModel;
-import br.com.alg.giraofoodapi.api.v1.model.input.CozinhaInput;
 import br.com.alg.giraofoodapi.domain.repository.CozinhaRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastroCozinhaService;
-import br.com.alg.giraofoodapi.api.v1.openapi.controller.CozinhaControllerOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(path = "/v1/cozinhas")
-public class CozinhaController implements CozinhaControllerOpenApi {
+@RequestMapping(path = "/v2/cozinhas", produces = MediaType.APPLICATION_JSON_VALUE)
+public class CozinhaControllerV2 {
 
     @Autowired
     private CadastroCozinhaService cadastroCozinhaService;
@@ -31,45 +30,45 @@ public class CozinhaController implements CozinhaControllerOpenApi {
     private CozinhaRepository repository;
 
     @Autowired
-    private CozinhaModelAssembler assembler;
+    private CozinhaModelAssemblerV2 assembler;
 
     @Autowired
-    private CozinhaInputDisassembler disassembler;
+    private CozinhaInputDisassemblerV2 disassembler;
 
     @Autowired
     private PagedResourcesAssembler<Cozinha> pagedResourcesAssembler;
 
-    @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public PagedModel<CozinhaModel> listar(@PageableDefault(size = 10) Pageable pageable) {
+    @GetMapping
+    public PagedModel<CozinhaModelV2> listar(@PageableDefault(size = 10) Pageable pageable) {
         Page<Cozinha> cozinhasPage = repository.findAll(pageable);
 
-        PagedModel<CozinhaModel> cozinhaPagedModel = pagedResourcesAssembler
+        PagedModel<CozinhaModelV2> cozinhaPagedModel = pagedResourcesAssembler
                 .toModel(cozinhasPage, assembler);
 
         return cozinhaPagedModel;
     }
 
-    @GetMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CozinhaModel buscar(@PathVariable Long id){
+    public CozinhaModelV2 buscar(@PathVariable Long id){
         return assembler.toModel(this.cadastroCozinhaService.buscar(id));
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CozinhaModel salvar(@RequestBody @Valid CozinhaInput cozinha) {
+    public CozinhaModelV2 salvar(@RequestBody @Valid CozinhaInputV2 cozinha) {
         return assembler.toModel(this.cadastroCozinhaService.salvar(disassembler.toDomainObject(cozinha)));
     }
 
-    @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Cozinha atualizar(@PathVariable Long id, @RequestBody @Valid CozinhaInput cozinhaInput) {
+    @PutMapping(path = "/{id}")
+    public Cozinha atualizar(@PathVariable Long id, @RequestBody @Valid CozinhaInputV2 cozinhaInput) {
         Cozinha cozinhaExistente = this.cadastroCozinhaService.buscar(id);
         //BeanUtils.copyProperties(cozinhaInput, cozinhaExistente, "id");
         disassembler.copyToDomainInObject(cozinhaInput, cozinhaExistente);
         return this.cadastroCozinhaService.salvar(cozinhaExistente);
     }
 
-    @DeleteMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(path = "/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void remover(@PathVariable Long id) {
         this.cadastroCozinhaService.excluir(id);

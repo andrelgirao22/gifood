@@ -4,7 +4,6 @@ import br.com.alg.giraofoodapi.api.ResourceUriHelper;
 import br.com.alg.giraofoodapi.api.v1.assembler.CidadeInputDisassembler;
 import br.com.alg.giraofoodapi.api.v1.assembler.CidadeModelAssembler;
 import br.com.alg.giraofoodapi.api.v1.openapi.controller.CidadeControllerOpenApi;
-import br.com.alg.giraofoodapi.api.web.GiMediaTypes;
 import br.com.alg.giraofoodapi.domain.exception.EntidadeNaoEncontradaException;
 import br.com.alg.giraofoodapi.domain.exception.EstadoNaoEncontradoException;
 import br.com.alg.giraofoodapi.domain.exception.NegocioException;
@@ -22,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(path = "/cidades", produces = GiMediaTypes.V1_APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/v1/cidades", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CidadeController implements CidadeControllerOpenApi {
 
     @Autowired

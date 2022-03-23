@@ -3,6 +3,7 @@ package br.com.alg.giraofoodapi.api.v2.assembler;
 import br.com.alg.giraofoodapi.api.v1.GiLinksV1;
 import br.com.alg.giraofoodapi.api.v1.controller.CidadeController;
 import br.com.alg.giraofoodapi.api.v1.model.dto.CidadeModel;
+import br.com.alg.giraofoodapi.api.v2.GiLinksV2;
 import br.com.alg.giraofoodapi.api.v2.controller.CidadeControllerV2;
 import br.com.alg.giraofoodapi.api.v2.model.CidadeModelV2;
 import br.com.alg.giraofoodapi.domain.model.Cidade;
@@ -22,7 +23,7 @@ public class CidadeModelAssemblerV2 extends RepresentationModelAssemblerSupport<
     private CidadeModelAssemblerV2 assembler;
 
     @Autowired
-    private GiLinksV1 giLinks;
+    private GiLinksV2 giLinks;
 
     public CidadeModelAssemblerV2() {
         super(CidadeControllerV2.class, CidadeModelV2.class);

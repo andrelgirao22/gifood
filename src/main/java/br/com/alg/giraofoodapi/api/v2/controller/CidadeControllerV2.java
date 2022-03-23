@@ -1,14 +1,11 @@
 package br.com.alg.giraofoodapi.api.v2.controller;
 
 import br.com.alg.giraofoodapi.api.ResourceUriHelper;
-import br.com.alg.giraofoodapi.api.v1.assembler.CidadeInputDisassembler;
-import br.com.alg.giraofoodapi.api.v1.model.input.CidadeInput;
-import br.com.alg.giraofoodapi.api.v1.openapi.controller.CidadeControllerOpenApi;
 import br.com.alg.giraofoodapi.api.v2.assembler.CidadeInputDisassemblerV2;
 import br.com.alg.giraofoodapi.api.v2.assembler.CidadeModelAssemblerV2;
 import br.com.alg.giraofoodapi.api.v2.model.CidadeModelV2;
 import br.com.alg.giraofoodapi.api.v2.model.input.CidadeInputV2;
-import br.com.alg.giraofoodapi.api.web.GiMediaTypes;
+import br.com.alg.giraofoodapi.api.v2.openapi.CidadeControllerV2OpenApi;
 import br.com.alg.giraofoodapi.domain.exception.EntidadeNaoEncontradaException;
 import br.com.alg.giraofoodapi.domain.exception.EstadoNaoEncontradoException;
 import br.com.alg.giraofoodapi.domain.exception.NegocioException;
@@ -24,8 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(path = "/cidades", produces = GiMediaTypes.V2_APPLICATION_JSON_VALUE)
-public class CidadeControllerV2 {
+@RequestMapping(path = "/v2/cidades", produces = MediaType.APPLICATION_JSON_VALUE)
+public class CidadeControllerV2 implements CidadeControllerV2OpenApi {
 
     @Autowired
     private CidadeRepository repository;
@@ -39,13 +36,13 @@ public class CidadeControllerV2 {
     @Autowired
     private CidadeInputDisassemblerV2 disassembler;
 
-    @GetMapping(produces = GiMediaTypes.V2_APPLICATION_JSON_VALUE)
+    @GetMapping
     public CollectionModel<CidadeModelV2> listar() {
         return assembler.toCollectionModel(this.repository.findAll());
     }
 
-    @GetMapping(path = "/{cidadeId}", produces = GiMediaTypes.V2_APPLICATION_JSON_VALUE)
-    public CidadeModelV2 buscarPorId(@PathVariable Long cidadeId) {
+    @GetMapping(path = "/{cidadeId}")
+    public CidadeModelV2 buscar(@PathVariable Long cidadeId) {
         Cidade cidade = service.buscar(cidadeId);
         CidadeModelV2 cidadeDTO = assembler.toModel(cidade);
         return cidadeDTO;
@@ -53,7 +50,7 @@ public class CidadeControllerV2 {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CidadeModelV2 salvar(@RequestBody @Valid CidadeInputV2 cidadeInput) {
+    public CidadeModelV2 adicionar(@RequestBody @Valid CidadeInputV2 cidadeInput) {
         try{
             Cidade cidade = disassembler.toDomainObject(cidadeInput);
             cidade = service.salvar(cidade);
@@ -66,13 +63,13 @@ public class CidadeControllerV2 {
         }
     }
 
-    @PutMapping(path = "/{cidadeId}", produces = GiMediaTypes.V2_APPLICATION_JSON_VALUE)
-    public Cidade atualizar(@PathVariable Long cidadeId,  @RequestBody @Valid CidadeInputV2 cidadeInput) {
+    @PutMapping(path = "/{cidadeId}")
+    public CidadeModelV2 atualizar(@PathVariable Long cidadeId,  @RequestBody @Valid CidadeInputV2 cidadeInput) {
         Cidade cidadeAtual = this.service.buscar(cidadeId);
         //BeanUtils.copyProperties(cidade, cidadeAtual, "id");
         disassembler.copyToDomainInObject(cidadeInput, cidadeAtual);
         try {
-            return this.service.salvar(cidadeAtual);
+            return assembler.toModel(this.service.salvar(cidadeAtual));
         } catch (EntidadeNaoEncontradaException e) {
             throw new NegocioException(e.getMessage(),e);
         }
@@ -80,7 +77,7 @@ public class CidadeControllerV2 {
 
     @DeleteMapping(path = "{cidadeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long cidadeId) {
+    public void remover(@PathVariable Long cidadeId) {
         this.service.remover(cidadeId);
     }
 }

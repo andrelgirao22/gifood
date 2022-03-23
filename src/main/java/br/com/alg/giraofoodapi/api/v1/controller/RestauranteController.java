@@ -38,7 +38,7 @@ import java.util.Map;
 
 //@CrossOrigin(maxAge = 20)
 @RestController
-@RequestMapping("/restaurantes")
+@RequestMapping("/v1/restaurantes")
 public class RestauranteController implements RestauranteControllerOpenApi {
 
     @Autowired
