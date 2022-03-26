@@ -219,8 +219,9 @@ public class SpringFoxConfig {
 
     public ApiInfo apiInfoV1() {
         return new ApiInfoBuilder()
-                .title("Gifood")
-                .description("API aberta para clientes e restaurantes")
+                .title("Gifood API (Depreciada)")
+                .description("API aberta para clientes e restaurantes.<br>" +
+                        "<strong>Esta versão da API está depreciada e deixará de existir a partir de 01/01/2023. Use a versão mais atual da API.<strong/>")
                 .version("1")
                 .contact(new Contact("Alg", "http://www.algconsulting.com.br", "andrelgirao29@gmail.com"))
                 .build();
@@ -228,7 +229,7 @@ public class SpringFoxConfig {
 
     public ApiInfo apiInfoV2() {
         return new ApiInfoBuilder()
-                .title("Gifood")
+                .title("Gifood API")
                 .description("API aberta para clientes e restaurantes")
                 .version("2")
                 .contact(new Contact("Alg", "http://www.algconsulting.com.br", "andrelgirao29@gmail.com"))

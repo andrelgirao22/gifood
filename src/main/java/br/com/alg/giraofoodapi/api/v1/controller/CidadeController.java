@@ -36,11 +36,13 @@ public class CidadeController implements CidadeControllerOpenApi {
     @Autowired
     private CidadeInputDisassembler disassembler;
 
+    @Deprecated
     @GetMapping
     public CollectionModel<CidadeModel> listar() {
         return assembler.toCollectionModel(this.repository.findAll());
     }
 
+    @Deprecated
     @GetMapping(path = "/{cidadeId}")
     public CidadeModel buscarPorId(@PathVariable Long cidadeId) {
         Cidade cidade = service.buscar(cidadeId);
@@ -49,6 +51,7 @@ public class CidadeController implements CidadeControllerOpenApi {
 
     }
 
+    @Deprecated
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CidadeModel salvar(@RequestBody @Valid CidadeInput cidadeInput) {
@@ -64,6 +67,7 @@ public class CidadeController implements CidadeControllerOpenApi {
         }
     }
 
+    @Deprecated
     @PutMapping(path = "/{cidadeId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Cidade atualizar(@PathVariable Long cidadeId,  @RequestBody @Valid CidadeInput cidadeInput) {
         Cidade cidadeAtual = this.service.buscar(cidadeId);
