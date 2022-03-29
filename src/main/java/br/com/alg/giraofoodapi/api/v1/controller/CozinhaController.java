@@ -2,12 +2,13 @@ package br.com.alg.giraofoodapi.api.v1.controller;
 
 import br.com.alg.giraofoodapi.api.v1.assembler.CozinhaInputDisassembler;
 import br.com.alg.giraofoodapi.api.v1.assembler.CozinhaModelAssembler;
-import br.com.alg.giraofoodapi.domain.model.Cozinha;
 import br.com.alg.giraofoodapi.api.v1.model.dto.CozinhaModel;
 import br.com.alg.giraofoodapi.api.v1.model.input.CozinhaInput;
+import br.com.alg.giraofoodapi.api.v1.openapi.controller.CozinhaControllerOpenApi;
+import br.com.alg.giraofoodapi.domain.model.Cozinha;
 import br.com.alg.giraofoodapi.domain.repository.CozinhaRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastroCozinhaService;
-import br.com.alg.giraofoodapi.api.v1.openapi.controller.CozinhaControllerOpenApi;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@Slf4j
 @RestController
 @RequestMapping(path = "/v1/cozinhas")
 public class CozinhaController implements CozinhaControllerOpenApi {
@@ -41,6 +43,7 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 
     @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public PagedModel<CozinhaModel> listar(@PageableDefault(size = 10) Pageable pageable) {
+        log.info("Consultando cozinhas com {} páginas...", pageable.getPageSize());
         Page<Cozinha> cozinhasPage = repository.findAll(pageable);
 
         PagedModel<CozinhaModel> cozinhaPagedModel = pagedResourcesAssembler
