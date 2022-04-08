@@ -41,7 +41,7 @@ public class CozinhaController implements CozinhaControllerOpenApi {
     @Autowired
     private PagedResourcesAssembler<Cozinha> pagedResourcesAssembler;
 
-    @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public PagedModel<CozinhaModel> listar(@PageableDefault(size = 10) Pageable pageable) {
         log.info("Consultando cozinhas com {} páginas...", pageable.getPageSize());
         Page<Cozinha> cozinhasPage = repository.findAll(pageable);
