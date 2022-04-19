@@ -8,6 +8,7 @@ import br.com.alg.giraofoodapi.api.v1.model.dto.PedidoResumoModel;
 import br.com.alg.giraofoodapi.api.v1.model.input.PedidoInput;
 import br.com.alg.giraofoodapi.core.data.PageWrapper;
 import br.com.alg.giraofoodapi.core.data.PageableTranslator;
+import br.com.alg.giraofoodapi.core.security.GiSecurity;
 import br.com.alg.giraofoodapi.domain.exception.EntidadeNaoEncontradaException;
 import br.com.alg.giraofoodapi.domain.exception.NegocioException;
 import br.com.alg.giraofoodapi.domain.model.Pedido;
@@ -53,6 +54,9 @@ public class PedidoController implements PedidoControllerOpenApi {
     @Autowired
     private PagedResourcesAssembler<Pedido> pagedResourcesAssembler;
 
+    @Autowired
+    private GiSecurity giSecurity;
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public PagedModel<PedidoResumoModel> pesquisar(PedidoFilter filtro, @PageableDefault(size = 10) Pageable pageable) {
 
@@ -95,9 +99,8 @@ public class PedidoController implements PedidoControllerOpenApi {
         try {
             Pedido novoPedido = disassembler.toDomainObject(pedidoInput);
 
-            // TODO pegar usuário autenticado
             novoPedido.setCliente(new Usuario());
-            novoPedido.getCliente().setId(1L);
+            novoPedido.getCliente().setId(giSecurity.getUsuarioId());
 
             novoPedido = pedidoService.emitir(novoPedido);
 
