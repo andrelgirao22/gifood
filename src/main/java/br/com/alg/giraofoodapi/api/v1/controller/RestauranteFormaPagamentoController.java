@@ -4,6 +4,7 @@ import br.com.alg.giraofoodapi.api.v1.GiLinksV1;
 import br.com.alg.giraofoodapi.api.v1.assembler.FormaPagamentoModelAssembler;
 import br.com.alg.giraofoodapi.api.v1.assembler.RestauranteInputDisassembler;
 import br.com.alg.giraofoodapi.api.v1.model.dto.FormaPagamentoModel;
+import br.com.alg.giraofoodapi.core.security.CheckSecurity;
 import br.com.alg.giraofoodapi.domain.model.Restaurante;
 import br.com.alg.giraofoodapi.domain.service.CadastrosRestauranteService;
 import br.com.alg.giraofoodapi.api.v1.openapi.controller.RestauranteFormaPagamentoControllerOpenApi;
@@ -29,6 +30,7 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
     @Autowired
     private GiLinksV1 giLinks;
 
+    @CheckSecurity.Restaurante.PodeConsultar
     @GetMapping
     public CollectionModel<FormaPagamentoModel> listar(@PathVariable Long id) {
         Restaurante restaurante = restauranteService.buscar(id);
@@ -45,6 +47,7 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
         return formasPagamentoModel;
     }
 
+    @CheckSecurity.Restaurante.PodeEditar
     @PutMapping("/{formaPagamentoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> associar(@PathVariable Long id, @PathVariable Long formaPagamentoId) {
@@ -52,6 +55,7 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurity.Restaurante.PodeEditar
     @DeleteMapping("/{formaPagamentoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> desassociar(@PathVariable Long id, @PathVariable Long formaPagamentoId) {

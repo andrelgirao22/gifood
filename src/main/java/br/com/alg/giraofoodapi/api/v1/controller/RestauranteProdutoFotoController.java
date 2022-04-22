@@ -3,6 +3,7 @@ package br.com.alg.giraofoodapi.api.v1.controller;
 import br.com.alg.giraofoodapi.api.v1.assembler.FotoProdutoModelAssembler;
 import br.com.alg.giraofoodapi.api.v1.model.dto.FotoProdutoModel;
 import br.com.alg.giraofoodapi.api.v1.model.input.FotoProdutoInput;
+import br.com.alg.giraofoodapi.core.security.CheckSecurity;
 import br.com.alg.giraofoodapi.domain.exception.EntidadeNaoEncontradaException;
 import br.com.alg.giraofoodapi.domain.model.FotoProduto;
 import br.com.alg.giraofoodapi.domain.model.Produto;
@@ -42,6 +43,7 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
     private FotoProdutoModelAssembler assembler;
 
     @Override
+    @CheckSecurity.Restaurante.PodeConsultar
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public FotoProdutoModel buscar(@PathVariable Long restauranteId,
                                    @PathVariable Long produtoId) {
@@ -50,6 +52,7 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
         return assembler.toModel(fotoProduto);
     }
 
+    @CheckSecurity.Restaurante.PodeConsultar
     @GetMapping(produces = MediaType.ALL_VALUE)
     public ResponseEntity<?> servir(@PathVariable Long restauranteId, @PathVariable Long produtoId,
                                                           @RequestHeader("accept") String acceptHeader) throws HttpMediaTypeNotAcceptableException {
@@ -87,6 +90,7 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
         }
     }
 
+    @CheckSecurity.Restaurante.PodeEditar
     @PutMapping
     public FotoProdutoModel atualizarFoto(@PathVariable Long restauranteId,
                                           @PathVariable Long produtoId,
@@ -109,6 +113,7 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
         return assembler.toModel(fotoProduto);
     }
 
+    @CheckSecurity.Restaurante.PodeEditar
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluir(@PathVariable Long restauranteId, @PathVariable Long produtoId) {

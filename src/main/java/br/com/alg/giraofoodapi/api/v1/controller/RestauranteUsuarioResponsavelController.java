@@ -3,6 +3,7 @@ package br.com.alg.giraofoodapi.api.v1.controller;
 import br.com.alg.giraofoodapi.api.v1.GiLinksV1;
 import br.com.alg.giraofoodapi.api.v1.assembler.UsuarioModelAssembler;
 import br.com.alg.giraofoodapi.api.v1.model.dto.UsuarioModel;
+import br.com.alg.giraofoodapi.core.security.CheckSecurity;
 import br.com.alg.giraofoodapi.domain.model.Restaurante;
 import br.com.alg.giraofoodapi.domain.service.CadastroUsuarioService;
 import br.com.alg.giraofoodapi.domain.service.CadastrosRestauranteService;
@@ -29,6 +30,7 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
     @Autowired
     private GiLinksV1 giLinks;
 
+    @CheckSecurity.Restaurante.PodeConsultar
     @GetMapping
     public CollectionModel<UsuarioModel> listar(@PathVariable Long id) {
         Restaurante restaurante = restauranteService.buscar(id);
@@ -47,6 +49,7 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
         return usuarioModels;
     }
 
+    @CheckSecurity.Restaurante.PodeEditar
     @DeleteMapping("/{usuarioId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> desassociar(@PathVariable Long id, @PathVariable Long usuarioId) {
@@ -54,6 +57,7 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurity.Restaurante.PodeEditar
     @PutMapping("/{usuarioId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> associar(@PathVariable Long id, @PathVariable Long usuarioId) {
