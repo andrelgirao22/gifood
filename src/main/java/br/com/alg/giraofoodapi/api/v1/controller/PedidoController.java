@@ -8,6 +8,7 @@ import br.com.alg.giraofoodapi.api.v1.model.dto.PedidoResumoModel;
 import br.com.alg.giraofoodapi.api.v1.model.input.PedidoInput;
 import br.com.alg.giraofoodapi.core.data.PageWrapper;
 import br.com.alg.giraofoodapi.core.data.PageableTranslator;
+import br.com.alg.giraofoodapi.core.security.CheckSecurity;
 import br.com.alg.giraofoodapi.core.security.GiSecurity;
 import br.com.alg.giraofoodapi.domain.exception.EntidadeNaoEncontradaException;
 import br.com.alg.giraofoodapi.domain.exception.NegocioException;
@@ -57,6 +58,7 @@ public class PedidoController implements PedidoControllerOpenApi {
     @Autowired
     private GiSecurity giSecurity;
 
+    @CheckSecurity.Pedido.PodePesquisar
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public PagedModel<PedidoResumoModel> pesquisar(PedidoFilter filtro, @PageableDefault(size = 10) Pageable pageable) {
 
@@ -88,6 +90,7 @@ public class PedidoController implements PedidoControllerOpenApi {
 //        return mappingJacksonValue;
 //    }
 
+    @CheckSecurity.Pedido.PodeBuscar
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public PedidoModel buscar(@PathVariable String id) {
         return pedidoModelAssembler.toModel(pedidoService.buscar(id));

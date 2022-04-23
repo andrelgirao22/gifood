@@ -97,7 +97,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
         return restauranteDTO;
     }
 
-    @CheckSecurity.Restaurante.PodeEditar
+    @CheckSecurity.Restaurante.PodeGerenciarCadastro
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public RestauranteModel adicionar(@RequestBody @Valid RestauranteInput restaurante) {
@@ -108,7 +108,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
         }
     }
 
-    @CheckSecurity.Restaurante.PodeEditar
+    @CheckSecurity.Restaurante.PodeGerenciarCadastro
     @PutMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public RestauranteModel atualizar(@PathVariable Long id,
@@ -126,7 +126,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
         }
     }
 
-    @CheckSecurity.Restaurante.PodeEditar
+    @CheckSecurity.Restaurante.PodeGerenciarCadastro
     @PutMapping(path = "/{id}/ativo", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> ativar(@PathVariable Long id) {
@@ -134,7 +134,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurity.Restaurante.PodeEditar
+    @CheckSecurity.Restaurante.PodeGerenciarCadastro
     @DeleteMapping(path = "/{id}/inativar", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> inativar(@PathVariable Long id) {
@@ -142,7 +142,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurity.Restaurante.PodeEditar
+    @CheckSecurity.Restaurante.PodeGerenciarCadastro
     @PutMapping(path = "/ativacoes", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void ativarMultiplos(@RequestBody List<Long> ids) {
@@ -154,7 +154,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
         }
     }
 
-    @CheckSecurity.Restaurante.PodeEditar
+    @CheckSecurity.Restaurante.PodeGerenciarCadastro
     @DeleteMapping(path = "/inativacoes", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void inativarMultiplos(@RequestBody List<Long> ids) {
@@ -165,19 +165,19 @@ public class RestauranteController implements RestauranteControllerOpenApi {
         }
     }
 
-    @CheckSecurity.Restaurante.PodeEditar
-    @PutMapping(path = "/{id}/aberto", produces = MediaType.APPLICATION_JSON_VALUE)
+    @CheckSecurity.Restaurante.PodeGerenciarFuncionamento
+    @PutMapping(path = "/{restauranteId}/abertura", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> abrir(@PathVariable Long id) {
-        restauranteService.abrirRestaurante(id);
+    public ResponseEntity<Void> abrir(@PathVariable Long restauranteId) {
+        restauranteService.abrirRestaurante(restauranteId);
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurity.Restaurante.PodeEditar
-    @PutMapping(path = "/{id}/fechamento", produces = MediaType.APPLICATION_JSON_VALUE)
+    @CheckSecurity.Restaurante.PodeGerenciarFuncionamento
+    @PutMapping(path = "/{restauranteId}/fechamento", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> fechar(@PathVariable Long id) {
-        restauranteService.fecharRestaurante(id);
+    public ResponseEntity<Void> fechar(@PathVariable Long restauranteId) {
+        restauranteService.fecharRestaurante(restauranteId);
         return ResponseEntity.noContent().build();
     }
 

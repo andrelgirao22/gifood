@@ -49,7 +49,7 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
         return usuarioModels;
     }
 
-    @CheckSecurity.Restaurante.PodeEditar
+    @CheckSecurity.Restaurante.PodeGerenciarCadastro
     @DeleteMapping("/{usuarioId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> desassociar(@PathVariable Long id, @PathVariable Long usuarioId) {
@@ -57,7 +57,7 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurity.Restaurante.PodeEditar
+    @CheckSecurity.Restaurante.PodeGerenciarCadastro
     @PutMapping("/{usuarioId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> associar(@PathVariable Long id, @PathVariable Long usuarioId) {

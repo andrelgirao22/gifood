@@ -15,13 +15,14 @@ import br.com.alg.giraofoodapi.api.v1.openapi.controller.RestauranteProdutoContr
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/restaurantes/{id}/produtos")
+@RequestMapping("/v1/restaurantes/{restauranteId}/produtos")
 public class RestauranteProdutoController implements RestauranteProdutoControllerOpenApi {
 
     @Autowired
@@ -44,8 +45,8 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
 
     @CheckSecurity.Restaurante.PodeConsultar
     @GetMapping
-    public CollectionModel<ProdutoModel> listar(@PathVariable Long id, @RequestParam(required = false) Boolean incluirInativos) {
-        Restaurante restaurante = restauranteService.buscar(id);
+    public CollectionModel<ProdutoModel> listar(@PathVariable Long restauranteId, @RequestParam(required = false) Boolean incluirInativos) {
+        Restaurante restaurante = restauranteService.buscar(restauranteId);
         List<Produto> todosProdutos = null;
         if(incluirInativos) {
             todosProdutos = restaurante.getProdutos();
@@ -58,24 +59,24 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
     @Override
     @CheckSecurity.Restaurante.PodeConsultar
     @GetMapping("/{produtoId}")
-    public ProdutoModel buscar(@PathVariable Long id, @PathVariable Long produtoId) {
-        Produto produto = produtoService.buscarPeloRestaurante(produtoId, id);
+    public ProdutoModel buscar(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
+        Produto produto = produtoService.buscarPeloRestaurante(produtoId, restauranteId);
         return produtoModelAssembler.toModel(produto);
     }
 
-    @CheckSecurity.Restaurante.PodeEditar
-    @PostMapping("/{produtoID}")
-    public ProdutoModel adicionar(@PathVariable Long id, @RequestBody @Valid ProdutoInput produtoInput) {
-        Restaurante restaurante = restauranteService.buscar(id);
+    @CheckSecurity.Restaurante.PodeGerenciarFuncionamento
+    @PostMapping
+    public ProdutoModel adicionar(@PathVariable Long restauranteId, @RequestBody @Valid ProdutoInput produtoInput) {
+        Restaurante restaurante = restauranteService.buscar(restauranteId);
         Produto produto = produtoInputDisassembler.toDomainObject(produtoInput);
         produto.setRestaurante(restaurante);
         return produtoModelAssembler.toModel(produtoService.salvar(produto));
     }
 
-    @CheckSecurity.Restaurante.PodeEditar
-    @PutMapping("/{produtoId}")
+    @CheckSecurity.Restaurante.PodeGerenciarFuncionamento
+    @PutMapping(value = "/{produtoId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ProdutoModel atualizar(@PathVariable Long id, @PathVariable Long produtoId, @RequestBody @Valid ProdutoInput produtoInput) {
+    public ProdutoModel atualizar(@PathVariable Long restauranteId, @PathVariable Long produtoId, @RequestBody @Valid ProdutoInput produtoInput) {
         Produto produtoAtual = produtoService.buscar(produtoId);
         produtoInputDisassembler.copyToDomainInObject(produtoInput, produtoAtual);
         produtoAtual = produtoService.salvar(produtoAtual);

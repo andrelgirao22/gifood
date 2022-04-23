@@ -90,7 +90,7 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
         }
     }
 
-    @CheckSecurity.Restaurante.PodeEditar
+    @CheckSecurity.Restaurante.PodeGerenciarFuncionamento
     @PutMapping
     public FotoProdutoModel atualizarFoto(@PathVariable Long restauranteId,
                                           @PathVariable Long produtoId,
@@ -113,7 +113,7 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
         return assembler.toModel(fotoProduto);
     }
 
-    @CheckSecurity.Restaurante.PodeEditar
+    @CheckSecurity.Restaurante.PodeGerenciarFuncionamento
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluir(@PathVariable Long restauranteId, @PathVariable Long produtoId) {

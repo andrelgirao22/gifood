@@ -97,13 +97,15 @@ insert into usuario (id, nome, email, senha, data_cadastro) values
 (1, 'João da Silva', 'joao.ger@algafood.com', '$2a$12$6dgPBdkaklU5WIyka38V9.5wGsof47yTcNhv8cwkJ61J0gKs52PaO', timezone('utc', now())),
 (2, 'Maria Joaquina', 'maria.vnd@algafood.com', '$2a$12$6dgPBdkaklU5WIyka38V9.5wGsof47yTcNhv8cwkJ61J0gKs52PaO', timezone('utc', now())),
 (3, 'José Souza', 'jose.aux@algafood.com', '$2a$12$6dgPBdkaklU5WIyka38V9.5wGsof47yTcNhv8cwkJ61J0gKs52PaO', timezone('utc', now())),
-(4, 'Sebastião Martins', 'sebastiao.cad@algafood.com', '$2a$12$6dgPBdkaklU5WIyka38V9.5wGsof47yTcNhv8cwkJ61J0gKs52PaO', timezone('utc', now()));
-SELECT setval('usuario_seq', 4);
+(4, 'Sebastião Martins', 'sebastiao.cad@algafood.com', '$2a$12$6dgPBdkaklU5WIyka38V9.5wGsof47yTcNhv8cwkJ61J0gKs52PaO', timezone('utc', now())),
+(5, 'Manoel Lima', 'manoel.loja@gmail.com', '$2y$12$NSsM4gEOR7MKogflKR7GMeYugkttjNhAJMvFdHrBLaLp2HzlggP5W', timezone('utc', now())),
+(6, 'Débora Mendonça', 'email.teste.aw+debora@gmail.com', '$2y$12$NSsM4gEOR7MKogflKR7GMeYugkttjNhAJMvFdHrBLaLp2HzlggP5W', timezone('utc', now())),
+(7, 'Carlos Lima', 'email.teste.aw+carlos@gmail.com', '$2y$12$NSsM4gEOR7MKogflKR7GMeYugkttjNhAJMvFdHrBLaLp2HzlggP5W', timezone('utc', now()));
+SELECT setval('usuario_seq', 7);
 
 insert into usuario_grupo (usuario_id, grupo_id) values (1, 1), (1, 2), (2, 2);
 
 delete from restaurante_usuario;
-insert into usuario (id, nome, email, senha, data_cadastro) values (5, 'Manoel Lima', 'manoel.loja@gmail.com', '$2a$12$6dgPBdkaklU5WIyka38V9.5wGsof47yTcNhv8cwkJ61J0gKs52PaO', timezone('utc', now()));
 insert into restaurante_usuario (restaurante_id, usuario_id) values (1, 5), (3, 5);
 
 
