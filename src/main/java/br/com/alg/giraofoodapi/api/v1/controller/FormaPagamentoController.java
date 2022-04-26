@@ -4,6 +4,7 @@ import br.com.alg.giraofoodapi.api.v1.assembler.FormaPagamentoInputDisassembler;
 import br.com.alg.giraofoodapi.api.v1.assembler.FormaPagamentoModelAssembler;
 import br.com.alg.giraofoodapi.api.v1.model.dto.FormaPagamentoModel;
 import br.com.alg.giraofoodapi.api.v1.model.input.FormaPagamentoInput;
+import br.com.alg.giraofoodapi.core.security.CheckSecurity;
 import br.com.alg.giraofoodapi.domain.model.FormaPagamento;
 import br.com.alg.giraofoodapi.domain.repository.FormaPagamentoRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastroFormaPagamentoService;
@@ -38,6 +39,7 @@ public class FormaPagamentoController implements FormasPagamentoControllerOpenAp
     @Autowired
     private FormaPagamentoInputDisassembler disassembler;
 
+    @CheckSecurity.FormasPagamento.PodeConsultar
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CollectionModel<FormaPagamentoModel>> listar(ServletWebRequest request) {
 
@@ -67,6 +69,7 @@ public class FormaPagamentoController implements FormasPagamentoControllerOpenAp
 
     }
 
+    @CheckSecurity.FormasPagamento.PodeConsultar
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<FormaPagamentoModel> buscar(ServletWebRequest request, @PathVariable Long id) {
 
@@ -92,12 +95,14 @@ public class FormaPagamentoController implements FormasPagamentoControllerOpenAp
                 .body(formaPagamento);
     }
 
+    @CheckSecurity.FormasPagamento.PodeEditar
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public FormaPagamentoModel salvar(@RequestBody @Valid FormaPagamentoInput formaPagamentoInput) {
         return assembler.toModel(service.salvar(disassembler.toDomainObject(formaPagamentoInput)));
     }
 
+    @CheckSecurity.FormasPagamento.PodeEditar
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public FormaPagamentoModel alterar(@RequestBody FormaPagamentoInput formaPagamentoInput, @PathVariable Long id) {
         FormaPagamento formaPagamentoExistente = service.buscar(id);
@@ -105,6 +110,7 @@ public class FormaPagamentoController implements FormasPagamentoControllerOpenAp
         return assembler.toModel(service.salvar(formaPagamentoExistente));
     }
 
+    @CheckSecurity.FormasPagamento.PodeEditar
     @DeleteMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remover(@PathVariable Long id) {

@@ -2,6 +2,7 @@ package br.com.alg.giraofoodapi.api.v1.assembler;
 
 import br.com.alg.giraofoodapi.api.v1.GiLinksV1;
 import br.com.alg.giraofoodapi.api.v1.controller.FormaPagamentoController;
+import br.com.alg.giraofoodapi.core.security.GiSecurity;
 import br.com.alg.giraofoodapi.domain.model.FormaPagamento;
 import br.com.alg.giraofoodapi.api.v1.model.dto.FormaPagamentoModel;
 import org.modelmapper.ModelMapper;
@@ -22,6 +23,9 @@ public class FormaPagamentoModelAssembler extends RepresentationModelAssemblerSu
     @Autowired
     private GiLinksV1 giLinks;
 
+    @Autowired
+    private GiSecurity giSecurity;
+
     public FormaPagamentoModelAssembler() {
         super(FormaPagamentoController.class, FormaPagamentoModel.class);
     }
@@ -30,12 +34,18 @@ public class FormaPagamentoModelAssembler extends RepresentationModelAssemblerSu
     public FormaPagamentoModel toModel(FormaPagamento formaPagamento) {
         FormaPagamentoModel formaPagamentoModel = createModelWithId(formaPagamento.getId(), formaPagamento);
         modelMapper.map(formaPagamento, formaPagamentoModel);
-        formaPagamentoModel.add(giLinks.linkToFormasPagamento("formas-pagamento"));
+        if (giSecurity.podeConsultarFormasPagamento()) {
+            formaPagamentoModel.add(giLinks.linkToFormasPagamento("formasPagamento"));
+        }
         return formaPagamentoModel;
     }
 
     @Override
     public CollectionModel<FormaPagamentoModel> toCollectionModel(Iterable<? extends FormaPagamento> entities) {
-        return super.toCollectionModel(entities).add(giLinks.linkToFormasPagamento("formas-pagamento"));
+        CollectionModel<FormaPagamentoModel> collection = super.toCollectionModel(entities);
+        if(giSecurity.podeConsultarFormasPagamento()) {
+            collection.add(giLinks.linkToFormasPagamento("formas-pagamento"));
+        }
+        return collection;
     }
 }

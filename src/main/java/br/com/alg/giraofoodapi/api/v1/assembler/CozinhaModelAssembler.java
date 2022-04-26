@@ -2,6 +2,7 @@ package br.com.alg.giraofoodapi.api.v1.assembler;
 
 import br.com.alg.giraofoodapi.api.v1.GiLinksV1;
 import br.com.alg.giraofoodapi.api.v1.controller.CozinhaController;
+import br.com.alg.giraofoodapi.core.security.GiSecurity;
 import br.com.alg.giraofoodapi.domain.model.Cozinha;
 import br.com.alg.giraofoodapi.api.v1.model.dto.CozinhaModel;
 import org.modelmapper.ModelMapper;
@@ -21,6 +22,9 @@ public class CozinhaModelAssembler extends RepresentationModelAssemblerSupport<C
     @Autowired
     private GiLinksV1 giLinks;
 
+    @Autowired
+    private GiSecurity giSecurity;
+
     public CozinhaModelAssembler() {
         super(CozinhaController.class, CozinhaModel.class);
     }
@@ -31,7 +35,9 @@ public class CozinhaModelAssembler extends RepresentationModelAssemblerSupport<C
         CozinhaModel cozinhaModel = createModelWithId(cozinha.getId(), cozinha);
         modelMapper.map(cozinha, cozinhaModel);
 
-        cozinhaModel.add(giLinks.linkToCozinhas("cozinhas"));
+        if(giSecurity.podeConsultarCozinhas()) {
+            cozinhaModel.add(giLinks.linkToCozinhas("cozinhas"));
+        }
 
         return cozinhaModel;
     }

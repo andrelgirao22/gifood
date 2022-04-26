@@ -5,6 +5,7 @@ import br.com.alg.giraofoodapi.api.v1.assembler.GrupoModelAssembler;
 import br.com.alg.giraofoodapi.api.v1.openapi.controller.GrupoControllerOpenApi;
 import br.com.alg.giraofoodapi.api.v1.model.dto.GrupoModel;
 import br.com.alg.giraofoodapi.api.v1.model.input.GrupoInput;
+import br.com.alg.giraofoodapi.core.security.CheckSecurity;
 import br.com.alg.giraofoodapi.domain.model.Grupo;
 import br.com.alg.giraofoodapi.domain.repository.GrupoRepository;
 import br.com.alg.giraofoodapi.domain.service.CadastroGrupoService;
@@ -32,22 +33,26 @@ public class GrupoController implements GrupoControllerOpenApi {
     @Autowired
     private GrupoInputDisassembler disassembler;
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
     @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public CollectionModel<GrupoModel> listar() {
         return assembler.toCollectionModel(repository.findAll());
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
     @GetMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public GrupoModel buscar(@PathVariable Long id) {
         return  assembler.toModel(grupoService.buscar(id));
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public GrupoModel salvar(@RequestBody @Valid GrupoInput grupo) {
         return assembler.toModel(grupoService.salvar(disassembler.toDomainObject(grupo)));
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public GrupoModel alterar(@RequestBody @Valid GrupoInput grupo, @PathVariable Long id) {
         Grupo grupoExistente = grupoService.buscar(id);
@@ -55,6 +60,7 @@ public class GrupoController implements GrupoControllerOpenApi {
         return assembler.toModel(grupoService.salvar(grupoExistente));
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
     @DeleteMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remover(@PathVariable Long id) {

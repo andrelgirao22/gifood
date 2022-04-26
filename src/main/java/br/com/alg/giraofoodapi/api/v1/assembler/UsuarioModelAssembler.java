@@ -3,6 +3,7 @@ package br.com.alg.giraofoodapi.api.v1.assembler;
 import br.com.alg.giraofoodapi.api.v1.GiLinksV1;
 import br.com.alg.giraofoodapi.api.v1.controller.UsuarioController;
 import br.com.alg.giraofoodapi.api.v1.model.dto.UsuarioModel;
+import br.com.alg.giraofoodapi.core.security.GiSecurity;
 import br.com.alg.giraofoodapi.domain.model.Usuario;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class UsuarioModelAssembler extends RepresentationModelAssemblerSupport<U
     @Autowired
     private GiLinksV1 giLinks;
 
+    @Autowired
+    private GiSecurity giSecurity;
+
     public UsuarioModelAssembler() {
         super(UsuarioController.class, UsuarioModel.class);
     }
@@ -33,8 +37,10 @@ public class UsuarioModelAssembler extends RepresentationModelAssemblerSupport<U
         UsuarioModel usuarioModel = createModelWithId(usuario.getId(), usuario);
         modelMapper.map(usuario, usuarioModel);
 
-        usuarioModel.add(giLinks.linkToUsuarios("usuarios"));
-        usuarioModel.add(giLinks.linkToGruposUsuario(usuarioModel.getId(), "grupos-usuarios"));
+        if(giSecurity.podeConsultarUsuariosGruposPermissoes()) {
+            usuarioModel.add(giLinks.linkToUsuarios("usuarios"));
+            usuarioModel.add(giLinks.linkToGruposUsuario(usuarioModel.getId(), "grupos-usuarios"));
+        }
 
         return usuarioModel;
     }

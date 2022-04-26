@@ -3,6 +3,7 @@ package br.com.alg.giraofoodapi.api.v1.assembler;
 import br.com.alg.giraofoodapi.api.v1.GiLinksV1;
 import br.com.alg.giraofoodapi.api.v1.controller.RestauranteController;
 import br.com.alg.giraofoodapi.api.v1.model.dto.RestauranteModel;
+import br.com.alg.giraofoodapi.core.security.GiSecurity;
 import br.com.alg.giraofoodapi.domain.model.Restaurante;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class RestauranteModelAssembler extends RepresentationModelAssemblerSuppo
     @Autowired
     private GiLinksV1 giLinks;
 
+    @Autowired
+    private GiSecurity giSecurity;
+
     public RestauranteModelAssembler() {
         super(RestauranteController.class, RestauranteModel.class);
     }
@@ -31,32 +35,52 @@ public class RestauranteModelAssembler extends RepresentationModelAssemblerSuppo
         RestauranteModel restauranteModel = createModelWithId(restaurante.getId(), restaurante);
         modelMapper.map(restaurante, restauranteModel);
 
-        restauranteModel.add(giLinks.linkToRestaurantes());
-
-        if(restaurante.fechamentoPermitido()) {
-            restauranteModel.add(giLinks.linkToRestauranteFechamento(restauranteModel.getId()));
+        if(giSecurity.podeConsultarRestaurantes()) {
+            restauranteModel.add(giLinks.linkToRestaurantes());
         }
 
-        if(restaurante.aberturaPermitida()) {
-            restauranteModel.add(giLinks.linkToRestauranteAbertura(restauranteModel.getId()));
+        if(giSecurity.podeGerenciarCadastroRestaurantes()) {
+            if(restaurante.ativacaoPermitida()) {
+                restauranteModel.add(giLinks.linkToRestauranteAtivacao(restauranteModel.getId()));
+            }
+
+            if(restaurante.inativacaoPermitida()) {
+                restauranteModel.add(giLinks.linkToRestauranteInativacao(restauranteModel.getId()));
+            }
         }
 
-        if(restaurante.inativacaoPermitida()) {
-            restauranteModel.add(giLinks.linkToRestauranteInativacao(restauranteModel.getId()));
+        if(giSecurity.podeGerenciarFuncionamentoRestaurantes(restaurante.getId())) {
+            if(restaurante.fechamentoPermitido()) {
+                restauranteModel.add(giLinks.linkToRestauranteFechamento(restauranteModel.getId()));
+            }
+
+            if(restaurante.aberturaPermitida()) {
+                restauranteModel.add(giLinks.linkToRestauranteAbertura(restauranteModel.getId()));
+            }
         }
 
-        if(restaurante.ativacaoPermitida()) {
-            restauranteModel.add(giLinks.linkToRestauranteAtivacao(restauranteModel.getId()));
+        if(giSecurity.podeConsultarRestaurantes()) {
+            restauranteModel.add(giLinks.linkToProdutos(restauranteModel.getId(), "produtos"));
         }
 
-        restauranteModel.getCozinha().add(giLinks.linkToCozinha(restauranteModel.getId()));
-        if(restauranteModel.getEndereco() != null && restauranteModel.getEndereco().getCidade() != null) {
-            restauranteModel.getEndereco().getCidade()
-                    .add(giLinks.linkToCidade(restauranteModel.getEndereco().getCidade().getId()));
+        if(giSecurity.podeConsultarCozinhas()) {
+            restauranteModel.getCozinha().add(giLinks.linkToCozinha(restauranteModel.getId()));
         }
-        restauranteModel.add(giLinks.linkToRestaurantesFormasPagamento(restauranteModel.getId()));
-        restauranteModel.add(giLinks.linkToRestaurantesResponsaveis(restauranteModel.getId(),"responsaveis"));
-        restauranteModel.add(giLinks.linkToProdutos(restauranteModel.getId(), "produtos"));
+
+        if(giSecurity.podeConsultarCidades()) {
+            if(restauranteModel.getEndereco() != null && restauranteModel.getEndereco().getCidade() != null) {
+                restauranteModel.getEndereco().getCidade()
+                        .add(giLinks.linkToCidade(restauranteModel.getEndereco().getCidade().getId()));
+            }
+        }
+
+        if(giSecurity.podeConsultarRestaurantes()) {
+            restauranteModel.add(giLinks.linkToRestaurantesFormasPagamento(restauranteModel.getId()));
+        }
+
+        if(giSecurity.podeGerenciarCadastroRestaurantes()) {
+            restauranteModel.add(giLinks.linkToRestaurantesResponsaveis(restauranteModel.getId(),"responsaveis"));
+        }
 
 
         return restauranteModel;
@@ -64,6 +88,13 @@ public class RestauranteModelAssembler extends RepresentationModelAssemblerSuppo
 
     @Override
     public CollectionModel<RestauranteModel> toCollectionModel(Iterable<? extends Restaurante> entities) {
-        return super.toCollectionModel(entities).add(giLinks.linkToRestaurantes("restaurantes"));
+
+        CollectionModel<RestauranteModel> collectionModel = super.toCollectionModel(entities);
+
+        if(giSecurity.podeConsultarRestaurantes()) {
+            collectionModel.add(giLinks.linkToRestaurantes("restaurantes"));
+        }
+
+        return collectionModel;
     }
 }

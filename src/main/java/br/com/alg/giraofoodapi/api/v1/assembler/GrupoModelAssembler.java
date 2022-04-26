@@ -3,6 +3,7 @@ package br.com.alg.giraofoodapi.api.v1.assembler;
 import br.com.alg.giraofoodapi.api.v1.GiLinksV1;
 import br.com.alg.giraofoodapi.api.v1.controller.GrupoController;
 import br.com.alg.giraofoodapi.api.v1.model.dto.GrupoModel;
+import br.com.alg.giraofoodapi.core.security.GiSecurity;
 import br.com.alg.giraofoodapi.domain.model.Grupo;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class GrupoModelAssembler extends RepresentationModelAssemblerSupport<Gru
     @Autowired
     private GiLinksV1 giLinks;
 
+    @Autowired
+    private GiSecurity giSecurity;
+
     public GrupoModelAssembler() {
         super(GrupoController.class, GrupoModel.class);
     }
@@ -31,16 +35,19 @@ public class GrupoModelAssembler extends RepresentationModelAssemblerSupport<Gru
         GrupoModel grupoModel = createModelWithId(grupo.getId(), grupo);
         modelMapper.map(grupo, grupoModel);
 
-        grupoModel.add(giLinks.linkToGrupos("grupos"));
-
-        grupoModel.add(giLinks.linkToGrupoPermissoes(grupo.getId(), "permissoes"));
-
+        if(giSecurity.podeConsultarUsuariosGruposPermissoes()) {
+            grupoModel.add(giLinks.linkToGrupos("grupos"));
+            grupoModel.add(giLinks.linkToGrupoPermissoes(grupo.getId(), "permissoes"));
+        }
         return grupoModel;
     }
 
     @Override
     public CollectionModel<GrupoModel> toCollectionModel(Iterable<? extends Grupo> entities) {
-        return super.toCollectionModel(entities)
-                .add(giLinks.linkToGrupos());
+        CollectionModel<GrupoModel> collection = super.toCollectionModel(entities);
+        if(giSecurity.podeConsultarUsuariosGruposPermissoes()) {
+            collection.add(giLinks.linkToGrupos());
+        }
+        return collection;
     }
 }

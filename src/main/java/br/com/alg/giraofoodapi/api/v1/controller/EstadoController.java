@@ -2,6 +2,7 @@ package br.com.alg.giraofoodapi.api.v1.controller;
 
 import br.com.alg.giraofoodapi.api.v1.assembler.EstadoInputDisassembler;
 import br.com.alg.giraofoodapi.api.v1.assembler.EstadoModelAssembler;
+import br.com.alg.giraofoodapi.core.security.CheckSecurity;
 import br.com.alg.giraofoodapi.domain.model.Estado;
 import br.com.alg.giraofoodapi.api.v1.model.dto.EstadoModel;
 import br.com.alg.giraofoodapi.api.v1.model.input.EstadoInput;
@@ -32,11 +33,13 @@ public class EstadoController implements EstadoControllerOpenApi {
     @Autowired
     private EstadoInputDisassembler disassembler;
 
+    @CheckSecurity.Estados.PodeConsultar
     @GetMapping
     public CollectionModel<EstadoModel> listar() {
         return assembler.toCollectionModel(repository.findAll());
     }
 
+    @CheckSecurity.Estados.PodeConsultar
     @GetMapping("/{id}")
     public EstadoModel buscar(@PathVariable Long id) {
         Estado estado = this.service.buscar(id);
@@ -44,17 +47,20 @@ public class EstadoController implements EstadoControllerOpenApi {
         return assembler.toModel(estado);
     }
 
+    @CheckSecurity.Estados.PodeEditar
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EstadoModel adicionar(@RequestBody @Valid EstadoInput estado) {
         return assembler.toModel(this.service.salvar(disassembler.toDomainObject(estado)));
     }
 
+    @CheckSecurity.Estados.PodeEditar
     @PutMapping("/{id}")
     public EstadoModel atualizar(@PathVariable Long id, @RequestBody @Valid EstadoInput estado) {
         return assembler.toModel(this.service.alterar(id, disassembler.toDomainObject(estado)));
     }
 
+    @CheckSecurity.Estados.PodeEditar
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remover(@PathVariable Long id) {

@@ -3,6 +3,7 @@ package br.com.alg.giraofoodapi.api.v1.assembler;
 import br.com.alg.giraofoodapi.api.v1.GiLinksV1;
 import br.com.alg.giraofoodapi.api.v1.controller.RestauranteProdutoController;
 import br.com.alg.giraofoodapi.api.v1.model.dto.ProdutoModel;
+import br.com.alg.giraofoodapi.core.security.GiSecurity;
 import br.com.alg.giraofoodapi.domain.model.Produto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class ProdutoModelAssembler extends RepresentationModelAssemblerSupport<P
     @Autowired
     private GiLinksV1 giLinks;
 
+    @Autowired
+    private GiSecurity giSecurity;
+
     public ProdutoModelAssembler() {
         super(RestauranteProdutoController.class, ProdutoModel.class);
     }
@@ -29,10 +33,13 @@ public class ProdutoModelAssembler extends RepresentationModelAssemblerSupport<P
 
         ProdutoModel produtoModel = createModelWithId(produto.getId(), produto, produto.getRestaurante().getId());
         modelMapper.map(produto, produtoModel);
-        produtoModel.add(giLinks.linkToProdutos(produto.getRestaurante().getId(), "produtos"));
 
-        produtoModel.add(giLinks.linkToFotoProduto(
-                produto.getRestaurante().getId(), produto.getId(), "foto"));
+        if(giSecurity.podeConsultarRestaurantes()) {
+            produtoModel.add(giLinks.linkToProdutos(produto.getRestaurante().getId(), "produtos"));
+
+            produtoModel.add(giLinks.linkToFotoProduto(
+                    produto.getRestaurante().getId(), produto.getId(), "foto"));
+        }
 
         return produtoModel;
     }

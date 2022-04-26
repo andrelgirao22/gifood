@@ -2,6 +2,7 @@ package br.com.alg.giraofoodapi.api.v1.assembler;
 
 import br.com.alg.giraofoodapi.api.v1.GiLinksV1;
 import br.com.alg.giraofoodapi.api.v1.controller.EstadoController;
+import br.com.alg.giraofoodapi.core.security.GiSecurity;
 import br.com.alg.giraofoodapi.domain.model.Estado;
 import br.com.alg.giraofoodapi.api.v1.model.dto.EstadoModel;
 import org.modelmapper.ModelMapper;
@@ -22,6 +23,9 @@ public class EstadoModelAssembler extends RepresentationModelAssemblerSupport<Es
     @Autowired
     private GiLinksV1 giLinks;
 
+    @Autowired
+    private GiSecurity giSecurity;
+
     public EstadoModelAssembler() {
         super(EstadoController.class, EstadoModel.class);
     }
@@ -31,15 +35,19 @@ public class EstadoModelAssembler extends RepresentationModelAssemblerSupport<Es
 
         EstadoModel estadoModel = createModelWithId(estado.getId(), estado);
         modelMapper.map(estado, estadoModel);
-
-        estadoModel.add(giLinks.linkToEstados("estados"));
-        estadoModel.add(giLinks.linkToEstado(estado.getId(), "estados"));
-
+        if(giSecurity.podeConsultarEstados()) {
+            estadoModel.add(giLinks.linkToEstados("estados"));
+            estadoModel.add(giLinks.linkToEstado(estado.getId(), "estados"));
+        }
         return estadoModel;
     }
 
     @Override
     public CollectionModel<EstadoModel> toCollectionModel(Iterable<? extends Estado> entities) {
-        return super.toCollectionModel(entities).add(giLinks.linkToEstados());
+        CollectionModel<EstadoModel> collection = super.toCollectionModel(entities);
+        if(giSecurity.podeConsultarEstados()) {
+            collection.add(giLinks.linkToEstados());
+        }
+        return collection;
     }
 }

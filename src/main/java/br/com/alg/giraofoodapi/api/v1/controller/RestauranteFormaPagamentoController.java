@@ -5,6 +5,7 @@ import br.com.alg.giraofoodapi.api.v1.assembler.FormaPagamentoModelAssembler;
 import br.com.alg.giraofoodapi.api.v1.assembler.RestauranteInputDisassembler;
 import br.com.alg.giraofoodapi.api.v1.model.dto.FormaPagamentoModel;
 import br.com.alg.giraofoodapi.core.security.CheckSecurity;
+import br.com.alg.giraofoodapi.core.security.GiSecurity;
 import br.com.alg.giraofoodapi.domain.model.Restaurante;
 import br.com.alg.giraofoodapi.domain.service.CadastrosRestauranteService;
 import br.com.alg.giraofoodapi.api.v1.openapi.controller.RestauranteFormaPagamentoControllerOpenApi;
@@ -30,20 +31,25 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
     @Autowired
     private GiLinksV1 giLinks;
 
+    @Autowired
+    private GiSecurity giSecurity;
+
     @CheckSecurity.Restaurante.PodeConsultar
     @GetMapping
     public CollectionModel<FormaPagamentoModel> listar(@PathVariable Long id) {
         Restaurante restaurante = restauranteService.buscar(id);
         CollectionModel<FormaPagamentoModel> formasPagamentoModel =
-                assembler.toCollectionModel(restaurante.getFormasPagamento())
-                .removeLinks().add(giLinks.linkToRestaurantesFormasPagamento(id))
-                .add(giLinks.linkToRestauranteFormaPagamentoAssociacao(id, "associacao"));;
+                assembler.toCollectionModel(restaurante.getFormasPagamento()).removeLinks();
 
-        formasPagamentoModel.getContent().forEach(formaPagamentoModel -> {
-            formaPagamentoModel.add(giLinks
-                    .linkToRestauranteFormaPagamentoDesassociacao(id, formaPagamentoModel.getId(), "desassociar"));
-        });
+        formasPagamentoModel.add(giLinks.linkToRestaurantesFormasPagamento(id));
 
+        if(giSecurity.podeGerenciarFuncionamentoRestaurantes(restaurante.getId())) {
+            formasPagamentoModel.add(giLinks.linkToRestauranteFormaPagamentoAssociacao(id, "associacao"));
+            formasPagamentoModel.getContent().forEach(formaPagamentoModel -> {
+                formaPagamentoModel.add(giLinks
+                        .linkToRestauranteFormaPagamentoDesassociacao(id, formaPagamentoModel.getId(), "desassociar"));
+            });
+        }
         return formasPagamentoModel;
     }
 

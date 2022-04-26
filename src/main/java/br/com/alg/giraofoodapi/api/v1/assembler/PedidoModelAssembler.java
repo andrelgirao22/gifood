@@ -3,6 +3,7 @@ package br.com.alg.giraofoodapi.api.v1.assembler;
 import br.com.alg.giraofoodapi.api.v1.GiLinksV1;
 import br.com.alg.giraofoodapi.api.v1.model.dto.PedidoModel;
 import br.com.alg.giraofoodapi.api.v1.controller.PedidoController;
+import br.com.alg.giraofoodapi.core.security.GiSecurity;
 import br.com.alg.giraofoodapi.domain.model.Pedido;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class PedidoModelAssembler extends RepresentationModelAssemblerSupport<Pe
     @Autowired
     private GiLinksV1 giLinks;
 
+    @Autowired
+    private GiSecurity giSecurity;
+
     public PedidoModelAssembler() {
         super(PedidoController.class, PedidoModel.class);
     }
@@ -30,34 +34,41 @@ public class PedidoModelAssembler extends RepresentationModelAssemblerSupport<Pe
         PedidoModel pedidoModel = createModelWithId(pedido.getId(), pedido);
         modelMapper.map(pedido, pedidoModel);
 
-        pedidoModel.add(linkTo(PedidoController.class).withRel("pedidos"));
-        pedidoModel.add(giLinks.linkToPedidos("pedidos"));
-
-        if(pedido.podeSerConfirmado()) {
-            pedidoModel.add(giLinks.linkToConfirmacaoPedido(pedidoModel.getCodigo(), "confirmar"));
+        if(giSecurity.podePesquisarPedidos()) {
+            //pedidoModel.add(linkTo(PedidoController.class).withRel("pedidos"));
+            pedidoModel.add(giLinks.linkToPedidos("pedidos"));
         }
 
-        if(pedido.podeSerCancelado()) {
-            pedidoModel.add(giLinks.linkToCancelarPedido(pedidoModel.getCodigo(), "cancelar"));
-        }
+        if(giSecurity.podeGerenciarPedidos(pedido.getCodigo())) {
+            if(pedido.podeSerConfirmado()) {
+                pedidoModel.add(giLinks.linkToConfirmacaoPedido(pedidoModel.getCodigo(), "confirmar"));
+            }
 
-        if(pedido.podeSerEntregue())  {
-            pedidoModel.add(giLinks.linkToEntregaPedido(pedidoModel.getCodigo(), "entregar"));
+            if(pedido.podeSerCancelado()) {
+                pedidoModel.add(giLinks.linkToCancelarPedido(pedidoModel.getCodigo(), "cancelar"));
+            }
+
+            if(pedido.podeSerEntregue())  {
+                pedidoModel.add(giLinks.linkToEntregaPedido(pedidoModel.getCodigo(), "entregar"));
+            }
         }
 
         pedidoModel.getRestaurante()
                 .add(giLinks.linkToRestaurante(pedidoModel.getRestaurante().getId()));
 
-        pedidoModel.getCliente().add(giLinks.linkToUsuario(pedido.getCliente().getId()));
+        if(giSecurity.podeConsultarUsuariosGruposPermissoes()) {
+            pedidoModel.getCliente().add(giLinks.linkToUsuario(pedido.getCliente().getId()));
+        }
 
-        pedidoModel.getFormaPagamento().add(giLinks.linkToFormaPagamento(pedido.getFormaPagamento().getId()));
+        if(giSecurity.podeConsultarFormasPagamento()) {
+            pedidoModel.getFormaPagamento().add(giLinks.linkToFormaPagamento(pedido.getFormaPagamento().getId()));
+        }
 
-        pedidoModel.getItens().forEach(item -> {
-            item.add(giLinks.linkToProduto(pedidoModel.getRestaurante().getId(), item.getProdutoId(), "produto"));
-        });
-
-
+        if(giSecurity.podeConsultarRestaurantes()) {
+            pedidoModel.getItens().forEach(item -> {
+                item.add(giLinks.linkToProduto(pedidoModel.getRestaurante().getId(), item.getProdutoId(), "produto"));
+            });
+        }
         return pedidoModel;
     }
-
 }

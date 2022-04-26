@@ -4,6 +4,7 @@ import br.com.alg.giraofoodapi.api.ResourceUriHelper;
 import br.com.alg.giraofoodapi.api.v1.assembler.CidadeInputDisassembler;
 import br.com.alg.giraofoodapi.api.v1.assembler.CidadeModelAssembler;
 import br.com.alg.giraofoodapi.api.v1.openapi.controller.CidadeControllerOpenApi;
+import br.com.alg.giraofoodapi.core.security.CheckSecurity;
 import br.com.alg.giraofoodapi.domain.exception.EntidadeNaoEncontradaException;
 import br.com.alg.giraofoodapi.domain.exception.EstadoNaoEncontradoException;
 import br.com.alg.giraofoodapi.domain.exception.NegocioException;
@@ -36,12 +37,14 @@ public class CidadeController implements CidadeControllerOpenApi {
     @Autowired
     private CidadeInputDisassembler disassembler;
 
+    @CheckSecurity.Cidades.PodeConsultar
     @Deprecated
     @GetMapping
     public CollectionModel<CidadeModel> listar() {
         return assembler.toCollectionModel(this.repository.findAll());
     }
 
+    @CheckSecurity.Cidades.PodeConsultar
     @Deprecated
     @GetMapping(path = "/{cidadeId}")
     public CidadeModel buscarPorId(@PathVariable Long cidadeId) {
@@ -51,6 +54,7 @@ public class CidadeController implements CidadeControllerOpenApi {
 
     }
 
+    @CheckSecurity.Cidades.PodeEditar
     @Deprecated
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -67,6 +71,7 @@ public class CidadeController implements CidadeControllerOpenApi {
         }
     }
 
+    @CheckSecurity.Cidades.PodeEditar
     @Deprecated
     @PutMapping(path = "/{cidadeId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Cidade atualizar(@PathVariable Long cidadeId,  @RequestBody @Valid CidadeInput cidadeInput) {
@@ -80,6 +85,7 @@ public class CidadeController implements CidadeControllerOpenApi {
         }
     }
 
+    @CheckSecurity.Cidades.PodeEditar
     @DeleteMapping(path = "{cidadeId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long cidadeId) {

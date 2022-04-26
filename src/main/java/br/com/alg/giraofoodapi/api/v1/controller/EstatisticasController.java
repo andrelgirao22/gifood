@@ -1,6 +1,7 @@
 package br.com.alg.giraofoodapi.api.v1.controller;
 
 import br.com.alg.giraofoodapi.api.v1.GiLinksV1;
+import br.com.alg.giraofoodapi.core.security.CheckSecurity;
 import br.com.alg.giraofoodapi.domain.filter.VendaDiariaFilter;
 import br.com.alg.giraofoodapi.domain.model.VendaDiaria;
 import br.com.alg.giraofoodapi.domain.service.VendaQueryService;
@@ -30,11 +31,13 @@ public class EstatisticasController implements EstatisticasControllerOpenApi {
     @Autowired
     private GiLinksV1 giLinks;
 
+    @CheckSecurity.Estatisticas.PodeConsultar
     @GetMapping(value = "/vendas-diarias", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<VendaDiaria> consultarVendasDiarias(VendaDiariaFilter filtro) {
         return vendaQueryService.consultarVendasDiarias(filtro);
     }
 
+    @CheckSecurity.Estatisticas.PodeConsultar
     @GetMapping
     public EstatisticaEntryPointModel estatisticaEntryPointModel() {
         var entryPoint = new  EstatisticaEntryPointModel();
@@ -44,6 +47,7 @@ public class EstatisticasController implements EstatisticasControllerOpenApi {
         return entryPoint;
     }
 
+    @CheckSecurity.Estatisticas.PodeConsultar
     @GetMapping(value = "/vendas-diarias", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> consultarVendasDiariasPdf(VendaDiariaFilter filtro) {
         byte[] bytesPdf = reportService.emitirVendasDiarias(filtro);

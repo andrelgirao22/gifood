@@ -4,6 +4,7 @@ import br.com.alg.giraofoodapi.api.v1.GiLinksV1;
 import br.com.alg.giraofoodapi.api.v1.assembler.UsuarioModelAssembler;
 import br.com.alg.giraofoodapi.api.v1.model.dto.UsuarioModel;
 import br.com.alg.giraofoodapi.core.security.CheckSecurity;
+import br.com.alg.giraofoodapi.core.security.GiSecurity;
 import br.com.alg.giraofoodapi.domain.model.Restaurante;
 import br.com.alg.giraofoodapi.domain.service.CadastroUsuarioService;
 import br.com.alg.giraofoodapi.domain.service.CadastrosRestauranteService;
@@ -30,6 +31,9 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
     @Autowired
     private GiLinksV1 giLinks;
 
+    @Autowired
+    private GiSecurity giSecurity;
+
     @CheckSecurity.Restaurante.PodeConsultar
     @GetMapping
     public CollectionModel<UsuarioModel> listar(@PathVariable Long id) {
@@ -40,12 +44,15 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
                 .removeLinks()
                 .add(giLinks.linkToResponsaveisRestaurante(id));
 
-        usuarioModels.add(giLinks.linkToResponsaveisRestauranteAssociacao(id, "associar"));
+        if(giSecurity.podeGerenciarCadastroRestaurantes()) {
+            usuarioModels.add(giLinks.linkToResponsaveisRestauranteAssociacao(id, "associar"));
+        }
 
-        usuarioModels.getContent().forEach(usuarioModel -> {
-            usuarioModel.add(giLinks.linkToResponsaveisRestauranteDesassocicao(id, usuarioModel.getId(), "desassociar"));
-        });
-
+        if(giSecurity.podeGerenciarCadastroRestaurantes()) {
+            usuarioModels.getContent().forEach(usuarioModel -> {
+                usuarioModel.add(giLinks.linkToResponsaveisRestauranteDesassocicao(id, usuarioModel.getId(), "desassociar"));
+            });
+        }
         return usuarioModels;
     }
 

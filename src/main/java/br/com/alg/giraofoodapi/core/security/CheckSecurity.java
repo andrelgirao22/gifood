@@ -25,20 +25,39 @@ public @interface CheckSecurity {
         }
     }
 
+    public @interface Restaurante {
+
+        @PreAuthorize("@giSecurity.podeGerenciarCadastroRestaurantes()")
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        public @interface PodeGerenciarCadastro {
+        }
+
+        @PreAuthorize("@giSecurity.podeGerenciarFuncionamentoRestaurantes(#restauranteId)")
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        public @interface PodeGerenciarFuncionamento {
+        }
+
+        @PreAuthorize("@giSecurity.podeConsultarRestaurantes()")
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        public @interface PodeConsultar {
+        }
+    }
+
     public @interface Pedido {
 
         @PreAuthorize("hasAuthority('SCOPE_READ') and isAuthenticated()")
         @PostAuthorize("hasAuthority('CONSULTAR_PEDIDOS') " +
-                "or @giSecurity.getUsuarioId() == returnObject.cliente.id " +
+                "or @giSecurity.usuarioAutenticadoIgual(returnObject.cliente.id) " +
                 "or @giSecurity.gerenciaRestaurante(returnObject.restaurante.id)")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface PodeBuscar {
         }
 
-        @PreAuthorize("hasAuthority('SCOPE_READ') and hasAuthority('CONSULTAR_PEDIDOS')" +
-                      " or @giSecurity.getUsuarioId() == #filtro.clienteId" +
-                      " or @giSecurity.gerenciaRestaurante(#filtro.restauranteId)")
+        @PreAuthorize("@giSecurity.podePesquisarPedidos(#filtro.clienteId, #filtro.restauranteId)")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface PodePesquisar {
@@ -50,31 +69,89 @@ public @interface CheckSecurity {
         public @interface PodeCriar {
         }
 
-        @PreAuthorize("hasAuthority('SCOPE_WRITE') and hasAuthority('GERENCIAR_PEDIDOS')" +
-                " or @giSecurity.gerenciaRestauranteDoPedido(#pedidoId)")
+        @PreAuthorize("@giSecurity.podeGerenciarPedidos(#codigoPedido)")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface PodeGerenciar {
         }
     }
 
-    public @interface Restaurante {
+    public @interface FormasPagamento {
 
-        @PreAuthorize("hasAuthority('SCOPE_WRITE') and hasAuthority('EDITAR_RESTAURANTES')")
+        @PreAuthorize("hasAuthority('SCOPE_WRITE') and hasAuthority('EDITAR_FORMAS_PAGAMENTO')")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
-        public @interface PodeGerenciarCadastro {
+        public @interface PodeEditar {
         }
 
-        @PreAuthorize("hasAuthority('SCOPE_WRITE') " +
-                " and hasAuthority('EDITAR_RESTAURANTES') " +
-                " or @giSecurity.gerenciaRestaurante(#restauranteId)")
+        @PreAuthorize("@giSecurity.podeConsultarFormasPagamento()")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
-        public @interface PodeGerenciarFuncionamento {
+        public @interface PodeConsultar {
+        }
+    }
+
+    public @interface Cidades {
+
+        @PreAuthorize("hasAuthority('SCOPE_WRITE') and hasAuthority('EDITAR_CIDADES')")
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        public @interface PodeEditar {
         }
 
-        @PreAuthorize("hasAuthority('SCOPE_READ') and isAuthenticated()")
+        @PreAuthorize("@giSecurity.podeConsultarCidades()")
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        public @interface PodeConsultar {
+        }
+    }
+
+    public @interface Estados {
+
+        @PreAuthorize("hasAuthority('SCOPE_WRITE') and hasAuthority('EDITAR_ESTADOS')")
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        public @interface PodeEditar {
+        }
+
+        @PreAuthorize("@giSecurity.podeConsultarEstados()")
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        public @interface PodeConsultar {
+        }
+    }
+
+    public @interface Estatisticas {
+
+        @PreAuthorize("@giSecurity.podeConsultarEstatisticas()")
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        public @interface PodeConsultar {
+        }
+    }
+
+    public @interface UsuariosGruposPermissoes {
+
+        @PreAuthorize("hasAuthority('SCOPE_WRITE') and  @giSecurity.usuarioAutenticadoIgual(#id)")
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        public @interface PodeAlterarPropriaSenha {
+        }
+
+        @PreAuthorize("hasAuthority('SCOPE_WRITE') and hasAuthority('EDITAR_USUARIOS_GRUPOS_PERMISSOES') " +
+                " or @giSecurity.usuarioAutenticadoIgual(#id)")
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        public @interface PodeAlterarUSuario {
+        }
+
+        @PreAuthorize("@giSecurity.podeEditarUsuariosGruposPermissoes()")
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        public @interface PodeEditar {
+        }
+
+        @PreAuthorize("@giSecurity.podeConsultarUsuariosGruposPermissoes()")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface PodeConsultar {

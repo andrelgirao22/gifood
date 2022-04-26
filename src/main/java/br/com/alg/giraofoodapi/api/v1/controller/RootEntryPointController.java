@@ -1,6 +1,7 @@
 package br.com.alg.giraofoodapi.api.v1.controller;
 
 import br.com.alg.giraofoodapi.api.v1.GiLinksV1;
+import br.com.alg.giraofoodapi.core.security.GiSecurity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.MediaType;
@@ -15,20 +16,46 @@ public class RootEntryPointController {
     @Autowired
     private GiLinksV1 giLinks;
 
+    @Autowired
+    private GiSecurity giSecurity;
+
     @GetMapping
     public RootEntryPointModel root() {
         var rootEntryPointModel = new RootEntryPointModel();
 
-        rootEntryPointModel.add(giLinks.linkToCozinhas("cozinhas"));
-        rootEntryPointModel.add(giLinks.linkToPedidos("pedidos"));
-        rootEntryPointModel.add(giLinks.linkToRestaurantes("restaurantes"));
-        rootEntryPointModel.add(giLinks.linkToGrupos("grupos"));
-        rootEntryPointModel.add(giLinks.linkToUsuarios("usuarios"));
-        rootEntryPointModel.add(giLinks.linkToPermissoes("permissoes"));
-        rootEntryPointModel.add(giLinks.linkToFormasPagamento("formas-pagamento"));
-        rootEntryPointModel.add(giLinks.linkToEstados("estados"));
-        rootEntryPointModel.add(giLinks.linkToCidades("cidades"));
-        rootEntryPointModel.add(giLinks.linkToEstatisticas("estatisticas"));
+        if (giSecurity.podeConsultarCozinhas()) {
+            rootEntryPointModel.add(giLinks.linkToCozinhas("cozinhas"));
+        }
+
+        if (giSecurity.podePesquisarPedidos()) {
+            rootEntryPointModel.add(giLinks.linkToPedidos("pedidos"));
+        }
+
+        if (giSecurity.podeConsultarRestaurantes()) {
+            rootEntryPointModel.add(giLinks.linkToRestaurantes("restaurantes"));
+        }
+
+        if (giSecurity.podeConsultarUsuariosGruposPermissoes()) {
+            rootEntryPointModel.add(giLinks.linkToGrupos("grupos"));
+            rootEntryPointModel.add(giLinks.linkToUsuarios("usuarios"));
+            rootEntryPointModel.add(giLinks.linkToPermissoes("permissoes"));
+        }
+
+        if (giSecurity.podeConsultarFormasPagamento()) {
+            rootEntryPointModel.add(giLinks.linkToFormasPagamento("formas-pagamento"));
+        }
+
+        if (giSecurity.podeConsultarEstados()) {
+            rootEntryPointModel.add(giLinks.linkToEstados("estados"));
+        }
+
+        if (giSecurity.podeConsultarCidades()) {
+            rootEntryPointModel.add(giLinks.linkToCidades("cidades"));
+        }
+
+        if (giSecurity.podeConsultarEstatisticas()) {
+            rootEntryPointModel.add(giLinks.linkToEstatisticas("estatisticas"));
+        }
 
         return rootEntryPointModel;
     }
