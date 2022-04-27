@@ -24,11 +24,9 @@ import org.springframework.web.context.request.ServletWebRequest;
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 import springfox.documentation.builders.*;
 import springfox.documentation.schema.AlternateTypeRules;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
-import springfox.documentation.service.Response;
-import springfox.documentation.service.Tag;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.json.JacksonModuleRegistrar;
 import springfox.documentation.spring.web.plugins.Docket;
 
@@ -51,6 +49,7 @@ public class SpringFoxConfig {
         return new Docket(DocumentationType.OAS_30)
                 .groupName("V1")
                 .select()
+
                 .apis(RequestHandlerSelectors.basePackage("br.com.alg.giraofoodapi.api.controller"))
                 .paths(PathSelectors.ant("/v1/**"))
                 .build()
@@ -102,6 +101,9 @@ public class SpringFoxConfig {
                         typeResolver.resolve(CollectionModel.class, UsuarioModel.class),
                         UsuariosModelOpenApi.class))
 
+                .securitySchemes(Arrays.asList(securityScheme()))
+                .securityContexts(Arrays.asList(securityContext()))
+
                 .apiInfo(apiInfoV1())
                 .tags(new Tag("Cidades", "Gerencia as cidades"),
                         new Tag("Grupos", "Gerencia os grupos"),
@@ -114,6 +116,33 @@ public class SpringFoxConfig {
                         new Tag("Usuários", "Gerencia os usuários"),
                         new Tag("Estatísticas", "Gerencia estatisticas"),
                         new Tag("Permissões", "Gerencia as permissões"));
+    }
+
+    public SecurityScheme securityScheme() {
+        return new OAuthBuilder()
+                .name("GiFood")
+                .grantTypes(grantTypes())
+                .scopes(scopes())
+                .build() ;
+    }
+
+    private SecurityContext securityContext() {
+        var securityReference = SecurityReference.builder()
+                .reference("Gifood")
+                .scopes(scopes().toArray(new AuthorizationScope[0]))
+                .build();
+        return SecurityContext.builder().securityReferences(Arrays.asList(securityReference))
+                .forPaths(PathSelectors.any())
+                .build();
+    }
+
+    public List<AuthorizationScope> scopes() {
+        return Arrays.asList(new AuthorizationScope("READ", "Acesso de leitura"),
+                new AuthorizationScope("WRITE", "Acesso de escrita"));
+    }
+
+    public List<GrantType> grantTypes() {
+        return Arrays.asList(new ResourceOwnerPasswordCredentialsGrant("/oauth/token"));
     }
 
     @Bean

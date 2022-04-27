@@ -1,6 +1,8 @@
 package br.com.alg.giraofoodapi.core.security;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,7 +31,12 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().denyAll()
                 .and()
         */
-        http.csrf().disable()
+           http
+                .formLogin().loginPage("/login")
+                .and()
+                .authorizeRequests().antMatchers("/oauth/**").authenticated()
+                .and()
+                .csrf().disable()
                 .cors()
             .and()
                 .oauth2ResourceServer()
@@ -56,6 +63,12 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
         });
 
         return jwtAuthenticationConverter;
+    }
+
+    @Bean
+    @Override
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
     }
 
 //    @Bean
