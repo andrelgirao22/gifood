@@ -1,5 +1,6 @@
 package br.com.alg.giraofoodapi;
 
+import br.com.alg.giraofoodapi.core.io.Base64ProtocolResolver;
 import br.com.alg.giraofoodapi.infrastructure.repository.CustomJpaRepositoryImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,7 +14,12 @@ public class GiraofoodApiApplication {
 
 	public static void main(String[] args) {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-		SpringApplication.run(GiraofoodApiApplication.class, args);
+
+		var app = new SpringApplication(GiraofoodApiApplication.class);
+		app.addListeners(new Base64ProtocolResolver());
+		app.run(args);
+
+		//SpringApplication.run(GiraofoodApiApplication.class, args);
 	}
 
 }

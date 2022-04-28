@@ -1,9 +1,15 @@
 package br.com.alg.giraofoodapi.core.security.authorizationserver;
 
+import java.security.KeyPair;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 
 import javax.sql.DataSource;
 
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.KeyUse;
+import com.nimbusds.jose.jwk.RSAKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -74,19 +80,33 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     	approvalStore.setTokenStore(tokenStore);
     	return approvalStore;
     }
+
+    @Bean
+    public JWKSet jwkSet() {
+        RSAKey.Builder builder = new RSAKey.Builder((RSAPublicKey) keyPair().getPublic())
+                .keyUse(KeyUse.SIGNATURE)
+                .algorithm(JWSAlgorithm.RS256)
+                .keyID("gifood-key-id");
+
+        return new JWKSet(builder.build());
+    }
     
     @Bean
     public JwtAccessTokenConverter jwtAccessTokenConverter() {
     	JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
     	//jwtAccessTokenConverter.setSigningKey("89a7assd893564sdasd4as6a5sdasdasda1545ass4s");
-    	var keyStorePass = jwtKeyStoreProperties.getPassword();
-    	var keyPairAlias = jwtKeyStoreProperties.getKeypairAlias();
-    	
-    	var keyStoreKeyFactory = new KeyStoreKeyFactory(jwtKeyStoreProperties.getJksLocation(), keyStorePass.toCharArray());
-    	var keyPair = keyStoreKeyFactory.getKeyPair(keyPairAlias);
-    	
-    	jwtAccessTokenConverter.setKeyPair(keyPair);
+
+    	jwtAccessTokenConverter.setKeyPair(keyPair());
     	return jwtAccessTokenConverter;
+    }
+
+    private KeyPair keyPair() {
+        var keyStorePass = jwtKeyStoreProperties.getPassword();
+        var keyPairAlias = jwtKeyStoreProperties.getKeypairAlias();
+
+        var keyStoreKeyFactory = new KeyStoreKeyFactory(jwtKeyStoreProperties.getJksLocation(), keyStorePass.toCharArray());
+        var keyPair = keyStoreKeyFactory.getKeyPair(keyPairAlias);
+        return keyPair;
     }
     
     private TokenGranter tokenGranter(AuthorizationServerEndpointsConfigurer endpoints) {
