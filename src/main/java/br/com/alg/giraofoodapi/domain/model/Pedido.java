@@ -1,9 +1,13 @@
 package br.com.alg.giraofoodapi.domain.model;
 
+import br.com.alg.giraofoodapi.domain.event.PedidoCanceladoEvent;
+import br.com.alg.giraofoodapi.domain.event.PedidoConfirmadoEvent;
 import br.com.alg.giraofoodapi.domain.exception.NegocioException;
+import br.com.alg.giraofoodapi.domain.service.EnvioEmailService;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -13,9 +17,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity
-public class Pedido {
+public class Pedido extends AbstractAggregateRoot<Pedido> {
 
     @EqualsAndHashCode.Include
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pedido_seq")
@@ -78,6 +82,7 @@ public class Pedido {
     public void confirma() {
         setStatus(StatusPedido.CONFIRMADO);
         setDataConfirmacao(OffsetDateTime.now());
+        registerEvent(new PedidoConfirmadoEvent(this));
     }
 
     public void entregue() {
@@ -88,6 +93,7 @@ public class Pedido {
     public void cancelar() {
         setStatus(StatusPedido.CANCELADO);
         setDataCancelamento(OffsetDateTime.now());
+        registerEvent(new PedidoCanceladoEvent(this));
     }
 
     public boolean podeSerConfirmado() {

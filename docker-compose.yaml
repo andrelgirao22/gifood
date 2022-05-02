@@ -1,0 +1,25 @@
+version: "3.9"
+networks:
+  gifood-network:
+    driver: bridge
+
+services:
+  gifood-postgres:
+    image: postgres:11-alpine
+    environment:
+      POSTGRES_PASSWORD: "1234"
+    ports:
+      - "5432:5432"
+    networks:
+      - gifood-network
+  gifood-api:
+    image: andrelgirao/gifood-api
+    command: ["/wait-for-it.sh", "gifood-postgres:5432", "-t", "30", "--", "java", "-jar", "api.jar"]
+    environment:
+      DB_HOST: gifood-postgres
+    ports:
+      - "8080:8080"
+    networks:
+      - gifood-network
+    depends_on:
+      - gifood-postgres
