@@ -1,4 +1,22 @@
 
+LOCK table cidade IN ACCESS SHARE MODE;
+LOCK table cozinha IN ACCESS SHARE MODE;
+LOCK table estado IN ACCESS SHARE MODE;
+LOCK table forma_pagamento IN ACCESS SHARE MODE;
+LOCK table grupo IN ACCESS SHARE MODE;
+LOCK table grupo_permissao IN ACCESS SHARE MODE;
+LOCK table permissao IN ACCESS SHARE MODE;
+LOCK table produto IN ACCESS SHARE MODE;
+LOCK table restaurante IN ACCESS SHARE MODE;
+LOCK table restaurante_forma_pagamento IN ACCESS SHARE MODE;
+--LOCK table restaurante_usuario_responsavel IN ACCESS SHARE MODE;
+LOCK table usuario IN ACCESS SHARE MODE;
+LOCK table usuario_grupo IN ACCESS SHARE MODE;
+LOCK table pedido IN ACCESS SHARE MODE;
+LOCK table item_pedido IN ACCESS SHARE MODE;
+LOCK table foto_produto IN ACCESS SHARE MODE;
+LOCK table oauth_client_details IN ACCESS SHARE MODE;
+
 TRUNCATE TABLE cidade RESTART IDENTITY CASCADE;
 TRUNCATE TABLE cozinha RESTART IDENTITY CASCADE;
 TRUNCATE TABLE estado RESTART IDENTITY CASCADE;

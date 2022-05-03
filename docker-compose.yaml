@@ -17,8 +17,6 @@ services:
     command: ["/wait-for-it.sh", "gifood-postgres:5432", "-t", "30", "--", "java", "-jar", "api.jar"]
     environment:
       DB_HOST: gifood-postgres
-    ports:
-      - "8080:8080"
     networks:
       - gifood-network
     depends_on:
