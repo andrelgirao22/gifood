@@ -7,7 +7,6 @@ import br.com.alg.giraofoodapi.util.ResourceUtils;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.hamcrest.Matchers;
-import org.hibernate.dialect.Database;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +24,7 @@ import static io.restassured.RestAssured.given;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension.class)
 @TestPropertySource("/application-test.properties")
-public class CadastroCozinhaT {
+public class CadastroCozinha {
 
     private static final int ID_COZINHA_INEXISTENTE = 100;
 

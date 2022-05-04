@@ -12,12 +12,30 @@ services:
       - "5432:5432"
     networks:
       - gifood-network
+
+  gifood-redis:
+    image: redis:6.2.1-alpine
+    networks:
+      - gifood-network
+
   gifood-api:
     image: andrelgirao/gifood-api
     command: ["/wait-for-it.sh", "gifood-postgres:5432", "-t", "30", "--", "java", "-jar", "api.jar"]
     environment:
       DB_HOST: gifood-postgres
+      SPRING_SESSION_STORE_TYPE: redis
+      SPRING_REDIS_HOST: gifood-redis
     networks:
       - gifood-network
     depends_on:
       - gifood-postgres
+
+  gifood-proxy:
+    build: ./nginx
+    image: gifood-proxy
+    ports:
+      - "80:80"
+    networks:
+      - gifood-network
+    depends_on:
+      - gifood-api
